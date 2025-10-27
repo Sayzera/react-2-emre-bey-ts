@@ -46,7 +46,7 @@ export interface Recipes {
 
 
 export interface RecipeDetail {
-    id: number;
+    id: null | number;
     title: string;
     image: string;
     imageType: string;
@@ -205,7 +205,7 @@ interface ProductMatch {
 }
 
 export const initialRecipeDetail: RecipeDetail = {
-    id: 0,
+    id: null,
     title: "",
     image: "",
     imageType: "",
