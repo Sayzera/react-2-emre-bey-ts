@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./styles.css";
 import {
   initialRecipeDetail,
@@ -10,14 +10,19 @@ import Recipes from "./recipes";
 import { constants } from "../../constants/constants";
 import { spoonacularApi } from "../../services/spoonacular/endpoint";
 
-
-
 export type SearchTypeProps = "recipes" | "nutriens";
-  const _name = 'sezer'
 
 function FoodApp() {
+  const searchInputRef = useRef<HTMLInputElement>(null)
   const [searchType, setSearchType] = useState<SearchTypeProps>("recipes");
   const [searchQuery, setSearchQuery] = useState<string>("");
+  /**
+   * typescript içerisinde yardımcı fonksiyonlardan içine eklenen herşeyi null yapan yardımcı fonksiyon nedir
+   */
+  const [customError, setCustomError] = useState<{
+    isError?: boolean;
+    errorMessage?: string;
+  }>({});
   const [loading, setLoading] = useState(false);
   const [recipes, setRecipes] = useState<RecipesType>({
     results: [],
@@ -25,8 +30,17 @@ function FoodApp() {
     offset: 0,
     totalResults: 0,
   });
+  const [offset, setOffset] = useState(0);
   const [selectedRecipe, setSelectedRecipe] =
     useState<RecipeDetail>(initialRecipeDetail);
+
+  // trigger more than
+  useEffect(() => {
+    if (offset > 0) {
+      searchRecipes(searchQuery);
+    }
+  }, [offset]);
+
 
 
   const searchRecipes = async (query: string) => {
@@ -40,12 +54,44 @@ function FoodApp() {
           spoonacularApi.GET_RECIPES
         }/complexSearch?apiKey=${constants.API_KEY}&query=${encodeURIComponent(
           query
-        )}&number=${constants.resultNumber}&addRecipeInformation=${constants.addRecipeInformation}`
+        )}&offset=${offset}&number=${
+          constants.resultNumber
+        }&addRecipeInformation=${constants.addRecipeInformation}`
       );
 
       const data = (await response.json()) as RecipesType;
 
-      setRecipes(data);
+      if (!response.ok) {
+        setCustomError({
+          isError: true,
+          errorMessage: data.message,
+        });
+
+        return;
+      }
+
+      // setRecipes(data);
+
+      // önceki verileri tut, yeni geleni üzerine ekle
+      // daha fazla butonunu tıklanıldımı
+      // aynı verileri tekrar eklememesi gerekiyor
+
+      setRecipes((prev) => {
+        // defensive checks
+        const prevResults = prev.results ?? [];
+
+        if (offset === 0 || prevResults.length === 0) {
+          return data;
+        }
+
+        const existingIds = new Set(prevResults.map((r) => r.id));
+        const newUnique = data.results.filter((r) => !existingIds.has(r.id));
+
+        return {
+          ...data,
+          results: [...prevResults, ...newUnique],
+        };
+      });
     } finally {
       setLoading(false);
     }
@@ -54,10 +100,54 @@ function FoodApp() {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
 
+    const inputVal = searchInputRef.current?.value
+
+    /**
+     * Kullanıcı more than yaptıktan sonra yeni bir arama yaparsa 
+     * offset ve daha önce tuttuğu veriler sıfırlanmalı aynı zamanda kullanıcı 
+     * aynı arama queryle search butonuna tıklarsa hiç bir aksiyon alınmamalı çünkü kullanıcı
+     * aynı şeyi tekrara aramaya çalışıyordur
+     */
+ 
+    
+
     if (searchType === "recipes") {
-      searchRecipes(searchQuery);
+    searchRecipes(searchQuery);
     }
   };
+
+  if (customError.isError) {
+    return (
+      <div className="food-app">
+        <div className="app-header">
+          <div
+            className="search-section"
+            style={{
+              color: "red",
+            }}
+          >
+            <div>{customError.errorMessage}</div>
+
+            <div
+              style={{
+                marginTop: "10px",
+              }}
+            >
+              <button
+                className="btn"
+                onClick={() => {
+                  window.location.reload();
+                }}
+              >
+                Refresh
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="food-app">
       <header className="app-header">
@@ -66,6 +156,7 @@ function FoodApp() {
       </header>
 
       <SearchSection
+        searchInputRef={searchInputRef}
         searchType={searchType}
         setSearchType={setSearchType}
         handleSearch={handleSearch}
@@ -74,7 +165,12 @@ function FoodApp() {
       />
 
       {/* TODO: Component olacak */}
-      <Recipes recipes={recipes} setSelectedRecipe={setSelectedRecipe} />
+      <Recipes
+        recipes={recipes}
+        setSelectedRecipe={setSelectedRecipe}
+        setOffset={setOffset}
+        offset={offset}
+      />
 
       {/**TODO: Component olacak */}
       {!!selectedRecipe.id && (
@@ -173,8 +269,6 @@ function FoodApp() {
           </div>
         </div>
       )}
-
-    
     </div>
   );
 }

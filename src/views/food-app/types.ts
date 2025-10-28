@@ -38,8 +38,12 @@ export interface Recipe {
 export interface Recipes {
     number:number,
     offset: number,
-    results: Recipe[] | []
-    totalResults: number
+    results: Recipe[] | [],
+    totalResults: number,
+    code?:number,
+    message?: string,
+    status?: "failure" |  string
+
 }
 
 

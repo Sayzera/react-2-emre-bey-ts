@@ -1,7 +1,7 @@
 
 
 export const constants = {
-        API_KEY: "a9a2db254bcb4527beabf7eb0b5a795b",
+        API_KEY: "ac5f713fca3147099bd0b3cb6dd1d896",
         resultNumber: 50,
         addRecipeInformation: true
 }
