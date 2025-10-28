@@ -1,4 +1,4 @@
-import { useRef, type Dispatch, type FormEvent, type RefObject, type SetStateAction } from "react";
+import {type Dispatch, type FormEvent,  type SetStateAction } from "react";
 import type { SearchTypeProps } from ".";
 
 interface SearchSectionProps {
@@ -7,7 +7,6 @@ interface SearchSectionProps {
   handleSearch: (e: FormEvent) => void;
   searchQuery: string;
   setSearchQuery: Dispatch<SetStateAction<string>>;
-  searchInputRef: RefObject<HTMLInputElement | null>
 }
 
 function SearchSection({
@@ -16,7 +15,6 @@ function SearchSection({
   handleSearch,
   searchQuery,
   setSearchQuery,
-  searchInputRef
 }: SearchSectionProps) {
 
 
@@ -46,7 +44,6 @@ function SearchSection({
         <form onSubmit={handleSearch} className="search-form">
           <div className="search-input-group">
             <input
-              ref={searchInputRef}
               value={searchQuery}
               onChange={(e) => {
                 setSearchQuery(e.target.value);

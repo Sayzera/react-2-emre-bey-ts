@@ -13,7 +13,7 @@ import { spoonacularApi } from "../../services/spoonacular/endpoint";
 export type SearchTypeProps = "recipes" | "nutriens";
 
 function FoodApp() {
-  const searchInputRef = useRef<HTMLInputElement>(null)
+  const searchInputRef = useRef("");
   const [searchType, setSearchType] = useState<SearchTypeProps>("recipes");
   const [searchQuery, setSearchQuery] = useState<string>("");
   /**
@@ -40,8 +40,6 @@ function FoodApp() {
       searchRecipes(searchQuery);
     }
   }, [offset]);
-
-
 
   const searchRecipes = async (query: string) => {
     if (query.trim() == "") return;
@@ -103,20 +101,23 @@ function FoodApp() {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
 
-    const inputVal = searchInputRef.current?.value
-
     /**
-     * Kullanıcı more than yaptıktan sonra yeni bir arama yaparsa 
-     * offset ve daha önce tuttuğu veriler sıfırlanmalı aynı zamanda kullanıcı 
+     * Kullanıcı more than yaptıktan sonra yeni bir arama yaparsa
+     * offset ve daha önce tuttuğu veriler sıfırlanmalı aynı zamanda kullanıcı
      * aynı arama queryle search butonuna tıklarsa hiç bir aksiyon alınmamalı çünkü kullanıcı
      * aynı şeyi tekrara aramaya çalışıyordur
      */
- 
-    
+
+    if (searchQuery === searchInputRef.current) { // --------------->  useRef içindeki değere bakıyoruz
+      console.log("Aynı arama");
+      return;
+    }
 
     if (searchType === "recipes") {
-    searchRecipes(searchQuery);
+      searchRecipes(searchQuery);
     }
+
+    searchInputRef.current = searchQuery; // -----------> arama yapıldıktan sonra değeri searchInputRef.current atıyoruz bu sayade önceki değer oluyor
   };
 
   if (customError.isError) {
@@ -159,7 +160,6 @@ function FoodApp() {
       </header>
 
       <SearchSection
-        searchInputRef={searchInputRef}
         searchType={searchType}
         setSearchType={setSearchType}
         handleSearch={handleSearch}
