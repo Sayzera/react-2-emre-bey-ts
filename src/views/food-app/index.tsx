@@ -47,7 +47,10 @@ function FoodApp() {
     if (query.trim() == "") return;
 
     setLoading(true);
-
+    /**
+     * TODO: axiosa dönüştürülecektir.
+     * detail içinde axiosa dönüştürülecektir
+     */
     try {
       const response = await fetch(
         `${spoonacularApi.BASE_URL}/${
