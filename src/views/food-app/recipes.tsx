@@ -5,9 +5,16 @@ import { constants } from "../../constants/constants";
 interface RecipesProps {
   recipes: RecipesType;
   setSelectedRecipe: Dispatch<SetStateAction<RecipeDetail>>;
+  setOffset:  Dispatch<SetStateAction<number>>
+  offset:number
 }
 
-function Recipes({ recipes, setSelectedRecipe }: RecipesProps) {
+function Recipes({ recipes, setSelectedRecipe, setOffset, offset }: RecipesProps) {
+
+  const pageNumber = recipes.totalResults;
+
+  const isClickableMoreBtn = pageNumber < offset + constants.resultNumber ;
+
   const getRecipeDetails = async (recipeId: number) => {
     try {
       const response = await fetch(
@@ -21,7 +28,9 @@ function Recipes({ recipes, setSelectedRecipe }: RecipesProps) {
     }
   };
   return (
-    recipes.results.length > 0 && (
+  <>
+   {
+      recipes.results.length > 0 && (
       <div className="recipes-grid">
         {recipes.results.map((recipe) => (
           <div
@@ -67,6 +76,25 @@ function Recipes({ recipes, setSelectedRecipe }: RecipesProps) {
         ))}
       </div>
     )
+   }
+    <div style={{
+      display:'flex',
+      justifyContent: 'center',
+      marginTop: '20px'
+    }}>
+    
+      <button 
+      disabled={isClickableMoreBtn}
+       onClick={() => {
+        setOffset((prev) => prev + constants.resultNumber)
+       }}
+      >
+        Daha fazla
+      </button>
+
+    </div>
+
+  </>
   );
 }
 

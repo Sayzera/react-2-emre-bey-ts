@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./styles.css";
 import {
   initialRecipeDetail,
@@ -10,12 +10,13 @@ import Recipes from "./recipes";
 import { constants } from "../../constants/constants";
 import { spoonacularApi } from "../../services/spoonacular/endpoint";
 
-
-
 export type SearchTypeProps = "recipes" | "nutriens";
-  const _name = 'sezer'
+const _name = "sezer";
 
 function FoodApp() {
+  const [offset, setOffset] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = constants.resultNumber; // kaç sonuç / sayfa
   const [searchType, setSearchType] = useState<SearchTypeProps>("recipes");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [loading, setLoading] = useState(false);
@@ -28,7 +29,6 @@ function FoodApp() {
   const [selectedRecipe, setSelectedRecipe] =
     useState<RecipeDetail>(initialRecipeDetail);
 
-
   const searchRecipes = async (query: string) => {
     if (query.trim() == "") return;
 
@@ -40,16 +40,36 @@ function FoodApp() {
           spoonacularApi.GET_RECIPES
         }/complexSearch?apiKey=${constants.API_KEY}&query=${encodeURIComponent(
           query
-        )}&number=${constants.resultNumber}&addRecipeInformation=${constants.addRecipeInformation}`
+        )}&offset=${offset}&number=${
+          constants.resultNumber
+        }&addRecipeInformation=${constants.addRecipeInformation}`
       );
 
       const data = (await response.json()) as RecipesType;
 
-      setRecipes(data);
+      setRecipes((prev) => {
+        // defensive checks
+        const prevResults = prev?.results ?? []
+        // Önceki veri yoksa 
+        if(offset === 0 || prevResults.length === 0) {
+          return data;
+        }
+
+        const existingIds = new Set(prevResults.map(r => r.id));
+        const newUnique = data.results.filter(r => !existingIds.has(r.id))
+
+        return {
+          ...data,
+          results: [...prevResults, ...newUnique]
+        }
+       
+      });
     } finally {
       setLoading(false);
     }
   };
+
+  console.log(recipes, 'recipes')
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,6 +78,46 @@ function FoodApp() {
       searchRecipes(searchQuery);
     }
   };
+
+  useEffect(() => {
+    // load More
+    if (offset > 0) {
+      searchRecipes(searchQuery);
+    }
+  }, [offset]);
+
+
+
+  // sayfa pencere fonksiyonu (windowSize: gösterilecek sayfa adedi)
+  const getPageWindow = (current: number, total: number, windowSize = 4) => {
+    if (total <= windowSize) {
+      return Array.from({ length: total }, (_, i) => i + 1);
+    }
+    const half = Math.floor(windowSize / 2);
+    let start = Math.max(1, current - half);
+    const maxStart = total - windowSize + 1;
+    if (start > maxStart) start = maxStart;
+    const end = Math.min(total, start + windowSize - 1);
+    return Array.from({ length: end - start + 1 }, (_, i) => start + i);
+  };
+
+  const goToPage = (page: number) => {
+    if (page < 1) return;
+    const totalPages = Math.max(1, Math.ceil((recipes.totalResults ?? 0) / pageSize));
+    if (page > totalPages) return;
+
+    const newOffset = (page - 1) * pageSize;
+    setCurrentPage(page);
+    setOffset(newOffset);
+    // anında doğru offset ile fetch et
+    searchRecipes(searchQuery, newOffset);
+  };
+// ...existing code...
+
+  // hesapla totalPages ve pageWindow render sırasında
+  const totalPages = Math.max(1, Math.ceil((recipes.totalResults ?? 0) / pageSize));
+  const pageWindow = getPageWindow(currentPage, totalPages, 4);
+
   return (
     <div className="food-app">
       <header className="app-header">
@@ -73,8 +133,40 @@ function FoodApp() {
         setSearchQuery={setSearchQuery}
       />
 
-      {/* TODO: Component olacak */}
-      <Recipes recipes={recipes} setSelectedRecipe={setSelectedRecipe} />
+      <Recipes
+        recipes={recipes}
+        setSelectedRecipe={setSelectedRecipe}
+        setOffset={setOffset}
+        offset={offset}
+       
+      />
+
+          <div className="pagination">
+        <button
+          onClick={() => goToPage(currentPage - 1)}
+          disabled={currentPage === 1}
+        >
+          Prev
+        </button>
+
+        {pageWindow.map((p) => (
+          <button
+            key={p}
+            onClick={() => goToPage(p)}
+            aria-current={p === currentPage ? "page" : undefined}
+            className={p === currentPage ? "active" : ""}
+          >
+            {p}
+          </button>
+        ))}
+
+        <button
+          onClick={() => goToPage(currentPage + 1)}
+          disabled={currentPage === totalPages}
+        >
+          Next
+        </button>
+      </div>
 
       {/**TODO: Component olacak */}
       {!!selectedRecipe.id && (
@@ -173,8 +265,6 @@ function FoodApp() {
           </div>
         </div>
       )}
-
-    
     </div>
   );
 }
