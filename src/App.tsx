@@ -1,10 +1,13 @@
-import FoodApp from "./views/food-app"
+// import FoodApp from "./views/food-app"
+
+import ReducerHook from "./views/useReducer"
 
 function App() {
 
   return (
    <>
-   <FoodApp />
+   {/* <FoodApp /> */}
+   <ReducerHook />
    </>
   )
 }
