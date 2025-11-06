@@ -1,10 +1,10 @@
-import FoodApp from "./views/food-app"
+import CounterApp from "./components/CounterApp"
 
 function App() {
 
   return (
    <>
-   <FoodApp />
+   <CounterApp />
    </>
   )
 }
