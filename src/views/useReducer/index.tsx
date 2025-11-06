@@ -28,7 +28,6 @@ function reducer(state: State, action: Action) {
         name: action.payload.name,
         count: 0,
       };
-
     case "personel_delete": {
       const deletedUser = action.payload.personel; // Osman
 
@@ -47,7 +46,6 @@ function reducer(state: State, action: Action) {
 
       return state;
     }
-
     default:
       return state;
   }
