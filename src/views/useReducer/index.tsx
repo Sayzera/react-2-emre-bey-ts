@@ -1,4 +1,5 @@
 import { useReducer } from "react";
+import { Button } from "../../components/ui/button";
 
 type State = {
   count: number;
@@ -11,7 +12,6 @@ type Action = {
   payload: {
     name?: string;
     personel?: string;
-    
   };
 };
 
@@ -60,8 +60,6 @@ const initialState = {
 function ReducerHook() {
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  console.log(state, "state");
-
   return (
     <div>
       <button
@@ -75,7 +73,7 @@ function ReducerHook() {
         Arttır
       </button>
 
-      <button
+      <Button
         onClick={() => {
           dispatch({
             type: "say_hello",
@@ -86,11 +84,12 @@ function ReducerHook() {
         }}
       >
         Say Hello {state.name}
-      </button>
+      </Button>
 
       <br />
 
-      <button
+      <Button
+        variant={"secondary"}
         onClick={() => {
           dispatch({
             type: "personel_delete",
@@ -101,7 +100,7 @@ function ReducerHook() {
         }}
       >
         Personel sil
-      </button>
+      </Button>
 
       {state.count}
     </div>

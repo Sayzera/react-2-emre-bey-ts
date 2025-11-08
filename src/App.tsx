@@ -1,13 +1,16 @@
 // import FoodApp from "./views/food-app"
-
-import ReducerHook from "./views/useReducer"
+// import ReducerHook from "./views/useReducer"
+import SeperReducerExample from "./views/useReducer/sepet-reducer-example"
 
 function App() {
 
   return (
    <>
    {/* <FoodApp /> */}
-   <ReducerHook />
+   {/* <ReducerHook /> */}
+   <SeperReducerExample />
+
+   
    </>
   )
 }
