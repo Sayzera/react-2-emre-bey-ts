@@ -1,6 +1,8 @@
 // import FoodApp from "./views/food-app"
 // import ReducerHook from "./views/useReducer"
-import SeperReducerExample from "./views/useReducer/sepet-reducer-example"
+// import SeperReducerExample from "./views/useReducer/sepet-reducer-example"
+
+import NotifactionSystem from "./views/notification-managment-system"
 
 function App() {
 
@@ -8,7 +10,8 @@ function App() {
    <>
    {/* <FoodApp /> */}
    {/* <ReducerHook /> */}
-   <SeperReducerExample />
+   {/* <SeperReducerExample /> */}
+   <NotifactionSystem />
 
    
    </>

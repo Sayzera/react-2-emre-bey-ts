@@ -36,44 +36,11 @@ type Action = {
   };
 };
 
-/**
-* TODO: Ürünlerin eğer count 1 ise direk arrayden kaldıralım ama count 1 den fazla ise önce countu eksiltelim sonrasında ürünü kaldıralım 
-* 
-* TODO: tüm ürünlerin count toplamını sepette gösterelim eksiliş ve artılarıda aynı zamanda sepete yansıtalım 
- */
 
 function reducer(state: State, action: Action) {
   switch (action.type) {
     case "add_product": {
-      //   const selectedProduct = state.products.find(
-      //     (product) => product.id === action.payload.id
-      //   );
-
-      //   const existingProduct = state.basket.find(
-      //     (basketProduct) => basketProduct.id === action.payload.id
-      //   );
-
-      //   if (!existingProduct) {
-      //     if (selectedProduct) {
-      //       state.basket = [...state.basket, { ...selectedProduct, count: 1 }];
-      //     }
-      //   }
-
-      //   if (existingProduct) {
-
-      //     const productId = existingProduct.id;
-      //     const productCount = existingProduct.count;
-      //     const productIndex = state.basket.findIndex(
-      //       (product) => product.id === productId
-      //     );
-
-      //     state.basket[productIndex] = {
-      //       ...state.basket[productIndex],
-      //       count: productCount + 1,
-      //     };
-      //   }
-
-      //   console.log(state.basket, 'basket')
+ 
 
       const selectedProduct = state.products.find(
         (product) => product.id === action.payload.id
