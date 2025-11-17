@@ -1,8 +1,9 @@
 // import FoodApp from "./views/food-app"
 // import ReducerHook from "./views/useReducer"
 // import SeperReducerExample from "./views/useReducer/sepet-reducer-example"
+// import NotifactionSystem from "./views/notification-managment-system"
 
-import NotifactionSystem from "./views/notification-managment-system"
+import MultiStepForm from "./views/multi-step-form"
 
 function App() {
 
@@ -11,7 +12,8 @@ function App() {
    {/* <FoodApp /> */}
    {/* <ReducerHook /> */}
    {/* <SeperReducerExample /> */}
-   <NotifactionSystem />
+   {/* <NotifactionSystem /> */}
+   <MultiStepForm />
 
    
    </>
