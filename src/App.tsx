@@ -4,11 +4,13 @@
 
 import MultipleForm from "./views/multiple-form"
 import NotifactionSystem from "./views/notification-managment-system"
+import { Toaster } from "@/components/ui/sonner"
 
 function App() {
 
   return (
    <>
+   <Toaster />
    {/* <FoodApp /> */}
    {/* <ReducerHook /> */}
    {/* <SeperReducerExample /> */}

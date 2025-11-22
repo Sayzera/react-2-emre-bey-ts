@@ -1,4 +1,9 @@
-import { useReducer, type ActionDispatch, type ChangeEvent } from "react";
+import {
+  useEffect,
+  useReducer,
+  type ActionDispatch,
+  type ChangeEvent,
+} from "react";
 import type { Action, FormData, FormErros, State } from "./types";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,96 +16,49 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { CheckCircle2, ChevronLeft, ChevronRight } from "lucide-react";
-import { validatePersonalInfo } from "./utils";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { validatePaymentInfo, validatePersonalInfo } from "./utils";
+import { config } from "./constants";
+import { StepIndicator } from "./components/step-indicator";
+import { PersonelInfoStep } from "./components/personal-info-step";
+import { toast } from "sonner";
 
-interface PersonalInfoStep {
+/**
+ * Eklenen formları bir listede tutalım aynı zamanda localStorage yazalım 
+ * aşağıda shadcnden aldığın table ile bu listeyi ayrı komponent olarak tasarlayalım ve her eklenen eleman bu listeye yansıtılsın
+ * formu gönder dediğimde yukarıda ifade edilen listeye göndersin ve listeden geri gel dediğimde ise beni tekrardan forma götürsün
+ * table içerisinde ... nokta ile işlemler olacak shadcn içerisinde dropdown menüyü kolonun en sonuna işlemler olarak ekleyeceksiniz
+ * 
+ * https://ui.shadcn.com/docs/components/table [Table]
+ * https://ui.shadcn.com/docs/components/dropdown-menu [İşlemler dropdownu için]
+ */
+
+interface PaymentAndSummaryStepProps {
   dispatch: ActionDispatch<[action: Action]>;
   formData: FormData;
   errors: FormErros;
 }
 // TODO: Component olacak
-const PersonelInfoStep = ({ dispatch, formData, errors }: PersonalInfoStep) => {
+const PaymentAndSummaryStep = ({
+  dispatch,
+  formData,
+  errors,
+}: PaymentAndSummaryStepProps) => {
   const handleChangeInput = (e: ChangeEvent<HTMLInputElement>) => {
     const name = e.target.name;
     const value = e.target.value;
     dispatch({
-      type: "UPDATE_PERSONAL_INFO",
+      type: "UPDATE_PAYMENT_INFO",
       payload: {
         [name]: value,
       },
     });
   };
 
-  return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="firstName">Ad *</Label>
-          <Input
-            id="firstName"
-            name="firstName"
-            value={formData.personalInfo.firstName}
-            onChange={handleChangeInput}
-          />
-          {errors.personalInfo?.firstName && (
-            <p className="text-sm text-destructive">
-              {errors.personalInfo.firstName}
-            </p>
-          )}
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="lastName">Soyad *</Label>
-          <Input
-            id="lastName"
-            name="lastName"
-            value={formData.personalInfo.lastName}
-            onChange={handleChangeInput}
-          />
-          {errors.personalInfo?.lastName && (
-            <p className="text-sm text-destructive">
-              {errors.personalInfo.lastName}
-            </p>
-          )}
-        </div>
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor="email">E-posta *</Label>
-        <Input
-          id="email"
-          name="email"
-          value={formData.personalInfo.email}
-          onChange={handleChangeInput}
-          type="email"
-        />
-        {errors.personalInfo?.email && (
-          <p className="text-sm text-destructive">
-            {errors.personalInfo.email}
-          </p>
-        )}
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor="phone">Telefon *</Label>
-        <Input
-          id="phone"
-          name="phone"
-          value={formData.personalInfo.phone}
-          onChange={handleChangeInput}
-          type="tel"
-          placeholder="05XX XXX XX XX"
-        />
-        {errors.personalInfo?.phone && (
-          <p className="text-sm text-destructive">
-            {errors.personalInfo.phone}
-          </p>
-        )}
-      </div>
-    </div>
-  );
-};
+  const fullName = `${formData.personalInfo.firstName} ${formData.personalInfo.lastName}`;
+  const email = formData.personalInfo.email;
+  const phone = formData.personalInfo.phone;
 
-// TODO: Component olacak
-const PaymentAndSummaryStep = () => {
   return (
     <div className="space-y-6">
       {/* Ödeme Bilgileri */}
@@ -111,37 +69,65 @@ const PaymentAndSummaryStep = () => {
             <Label htmlFor="cardNumber">Kart Numarası *</Label>
             <Input
               id="cardNumber"
+              name="cardNumber"
+              value={formData.paymentInfo.cardNumber}
+              onChange={handleChangeInput}
               placeholder="1234 5678 9012 3456"
               maxLength={16}
             />
+            {errors.paymentInfo?.cardNumber && (
+              <p className="text-sm text-destructive">
+                {errors.paymentInfo.cardNumber}
+              </p>
+            )}
           </div>
           <div className="space-y-2">
             <Label htmlFor="cardHolder">Kart Sahibi Adı *</Label>
-            <Input id="cardHolder" placeholder="AD SOYAD" />
-            {/* {errors.paymentInfo?.cardHolder && (
-            <p className="text-sm text-destructive">
-              {errors.paymentInfo.cardHolder}
-            </p>
-          )} */}
+            <Input
+              id="cardHolder"
+              name="cardHolder"
+              value={formData.paymentInfo.cardHolder}
+              onChange={handleChangeInput}
+              placeholder="AD SOYAD"
+            />
+            {errors.paymentInfo?.cardHolder && (
+              <p className="text-sm text-destructive">
+                {errors.paymentInfo.cardHolder}
+              </p>
+            )}
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="expiryDate">Son Kullanma Tarihi *</Label>
-              <Input id="expiryDate" placeholder="MM/YY" maxLength={5} />
-              {/* {errors.paymentInfo?.expiryDate && (
-              <p className="text-sm text-destructive">
-                {errors.paymentInfo.expiryDate}
-              </p>
-            )} */}
+              <Input
+                id="expiryDate"
+                name="expiryDate"
+                value={formData.paymentInfo.expiryDate}
+                onChange={handleChangeInput}
+                placeholder="MM/YY"
+                maxLength={5}
+              />
+              {errors.paymentInfo?.expiryDate && (
+                <p className="text-sm text-destructive">
+                  {errors.paymentInfo.expiryDate}
+                </p>
+              )}
             </div>
             <div className="space-y-2">
               <Label htmlFor="cvv">CVV *</Label>
-              <Input id="cvv" placeholder="123" maxLength={3} />
-              {/* {errors.paymentInfo?.cvv && (
-              <p className="text-sm text-destructive">
-                {errors.paymentInfo.cvv}
-              </p>
-            )} */}
+              <Input
+                id="cvv"
+                placeholder="123"
+                name="cvv"
+                value={formData.paymentInfo.cvv}
+                onChange={handleChangeInput}
+                maxLength={3}
+              />
+              {errors.paymentInfo?.cvv && (
+                <p className="text-sm text-destructive">
+                  {errors.paymentInfo.cvv}
+                </p>
+              )}
             </div>
           </div>
         </div>
@@ -154,13 +140,13 @@ const PaymentAndSummaryStep = () => {
           <h4 className="font-medium mb-2 text-sm">Kişisel Bilgiler</h4>
           <div className="bg-muted p-4 rounded-lg space-y-2">
             <p>
-              <span className="font-medium">Ad Soyad:</span>{" "}
+              <span className="font-medium">Ad Soyad: {fullName}</span>{" "}
             </p>
             <p>
-              <span className="font-medium">E-posta:</span>{" "}
+              <span className="font-medium">E-posta: {email}</span>{" "}
             </p>
             <p>
-              <span className="font-medium">Telefon:</span>{" "}
+              <span className="font-medium">Telefon: {phone}</span>{" "}
             </p>
           </div>
         </div>
@@ -210,6 +196,23 @@ function reducer(state: State, action: Action): State {
       };
     }
 
+    case "UPDATE_PAYMENT_INFO": {
+      return {
+        ...state,
+        formData: {
+          ...state.formData,
+          paymentInfo: {
+            ...state.formData.paymentInfo,
+            ...action.payload,
+          },
+        },
+        errors: {
+          ...state.errors,
+          paymentInfo: undefined,
+        },
+      };
+    }
+
     case "NEXT_STEP": {
       const errors: FormErros = {};
       let isValid = true;
@@ -228,7 +231,36 @@ function reducer(state: State, action: Action): State {
         };
       }
 
-      return state;
+      // Adımı tamamlandı olrak işartle
+      const completedSteps = state.completedSteps.includes(state.currentStep)
+        ? state.completedSteps
+        : [...state.completedSteps, state.currentStep];
+
+      return {
+        ...state,
+        currentStep: Math.min(state.currentStep + 1, config.TOTAL_STEPS),
+        errors,
+        completedSteps,
+      };
+    }
+
+    case "PREV_STEP": {
+      return {
+        ...state,
+        currentStep: Math.max(state.currentStep - 1, 1),
+        errors: {},
+      };
+    }
+
+    case "SET_ERRORS": {
+      return {
+        ...state,
+        errors: action.payload,
+      };
+    }
+
+    case "RESET_FORM": {
+      return initialState;
     }
 
     default:
@@ -239,13 +271,42 @@ function reducer(state: State, action: Action): State {
 function MultipleForm() {
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  console.log(state, "state");
+  const handleSubmit = () => {
+    const personalErrors = validatePersonalInfo(state.formData.personalInfo);
+    const paymentErros = validatePaymentInfo(state.formData.paymentInfo);
 
-  const handleSubmit = () => {};
+    const hasError =
+      Object.keys(personalErrors).length > 0 ||
+      Object.keys(paymentErros).length > 0;
+
+    if (hasError) {
+      dispatch({
+        type: "SET_ERRORS",
+        payload: {
+          personalInfo: personalErrors,
+          paymentInfo: paymentErros,
+        },
+      });
+      return;
+    }
+
+    dispatch({ type: "RESET_FORM" });
+    toast("Başarı", {
+      description: "Form başarıyla gönderildi",
+      // action: {
+      //   label: "Undo",
+      //   onClick: () => console.log("Undo"),
+      // },
+    });
+  };
 
   const nextStep = () => {
-    dispatch({type: 'NEXT_STEP'})
-  }
+    dispatch({ type: "NEXT_STEP" });
+  };
+
+  const prevStep = () => {
+    dispatch({ type: "PREV_STEP" });
+  };
 
   const renderStepContent = (stepCount = 1) => {
     switch (stepCount) {
@@ -258,14 +319,19 @@ function MultipleForm() {
           />
         );
       case 2:
-        return <PaymentAndSummaryStep />;
+        return (
+          <PaymentAndSummaryStep
+            dispatch={dispatch}
+            formData={state.formData}
+            errors={state.errors}
+          />
+        );
 
       default:
         return null;
     }
   };
 
-  const isTrue = 1;
   return (
     <div className="min-h-screen bg-background py-12 px-4">
       <div className=" max-w-3xl mx-auto">
@@ -277,42 +343,13 @@ function MultipleForm() {
         </div>
 
         {/* Komponente dönüşecek */}
-        <div className="flex items-center justify-between mb-8">
-          {stepTitles.map((stepTitle) => (
-            <div className="flex items-center flex-1" key={stepTitle}>
-              <div className="flex flex-col items-center flex-1">
-                <div
-                  className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold transition-all cursor-pointer ${
-                    isTrue
-                      ? "bg-primary text-primary-foreground scale-110"
-                      : isTrue
-                      ? "bg-green-500 text-white"
-                      : "bg-muted text-muted-foreground"
-                  } ${isTrue ? "hover:scale-105" : "cursor-not-allowed"}`}
-                >
-                  {isTrue ? <CheckCircle2 className="w-6 h-6" /> : 1}
-                </div>
-                <span
-                  className={`mt-2 text-xs text-center ${
-                    isTrue
-                      ? "font-semibold text-primary"
-                      : "text-muted-foreground"
-                  }`}
-                >
-                  {stepTitle}
-                </span>
-              </div>
-              {1 < 2 && (
-                <div
-                  className={`h-1 flex-1 mx-2 transition-colors ${
-                    !isTrue ? "bg-green-500" : "bg-muted"
-                  }`}
-                />
-              )}
-            </div>
-          ))}
-        </div>
+        <StepIndicator
+          completedSteps={state.completedSteps}
+          currentStep={state.currentStep}
+          stepTitles={stepTitles}
+        />
 
+        {/* TODO: Form Footer Komponent olacak  */}
         <Card>
           <CardHeader>
             <CardTitle>1</CardTitle>
@@ -320,15 +357,27 @@ function MultipleForm() {
           </CardHeader>
           <CardContent>{renderStepContent(state.currentStep)}</CardContent>
           <CardFooter className="flex justify-between">
-            <Button variant="outline" onClick={() => {}} disabled={false}>
+            <Button
+              variant="outline"
+              onClick={prevStep}
+              disabled={state.currentStep === 1}
+            >
               <ChevronLeft className="w-4 h-4 mr-2" />
               Önceki
             </Button>
-            <Button onClick={nextStep}>
+            <Button
+              onClick={nextStep}
+              disabled={state.currentStep >= config.TOTAL_STEPS}
+            >
               Sonraki
               <ChevronRight className="w-4 h-4 ml-2" />
             </Button>
-            <Button onClick={handleSubmit}>Formu Gönder</Button>
+            <Button
+              disabled={state.currentStep !== config.TOTAL_STEPS}
+              onClick={handleSubmit}
+            >
+              Formu Gönder
+            </Button>
           </CardFooter>
         </Card>
       </div>

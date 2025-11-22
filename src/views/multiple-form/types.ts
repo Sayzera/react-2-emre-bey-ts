@@ -30,10 +30,9 @@ export type State = {
 };
 
 export type Action =
-  | {
-      type: "UPDATE_PERSONAL_INFO";
-      payload: Partial<PersonalInfo>;
-    }
-  | {
-      type: "NEXT_STEP";
-    };
+  | { type: "UPDATE_PERSONAL_INFO"; payload: Partial<PersonalInfo> }
+  | { type: "UPDATE_PAYMENT_INFO"; payload: Partial<PaymentInfo> }
+  | { type: "NEXT_STEP" }
+  | { type: "PREV_STEP" }
+  | { type: "SET_ERRORS"; payload: FormErros }
+  | { type: "RESET_FORM"}
