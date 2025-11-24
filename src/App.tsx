@@ -1,9 +1,10 @@
 // import FoodApp from "./views/food-app"
 // import ReducerHook from "./views/useReducer"
 // import SeperReducerExample from "./views/useReducer/sepet-reducer-example"
+// import MultipleForm from "./views/multiple-form"
+// import NotifactionSystem from "./views/notification-managment-system"
 
-import MultipleForm from "./views/multiple-form"
-import NotifactionSystem from "./views/notification-managment-system"
+import ReactRouterExample from "./views/react-router-example"
 import { Toaster } from "@/components/ui/sonner"
 
 function App() {
@@ -15,7 +16,8 @@ function App() {
    {/* <ReducerHook /> */}
    {/* <SeperReducerExample /> */}
    {/* <NotifactionSystem /> */}
-   <MultipleForm />
+   {/* <MultipleForm /> */}
+   <ReactRouterExample />
 
    
    </>
