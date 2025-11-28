@@ -5,6 +5,37 @@ import HomePage from "./pages/home/home-page";
 import AboutPage from "./pages/about/about-page";
 import UserPage from "./pages/user/user-page";
 import ProductsPage from "./pages/products/products-page";
+import Contact from "./pages/contact";
+import type { JSX } from "react";
+
+interface PathListProps {
+  path: string;
+  component: JSX.Element;
+}
+
+
+const pathList: PathListProps[] = [
+  {
+    path: "/",
+    component:<HomePage />,
+  },
+  {
+    path: "/about",
+    component: <AboutPage/>,
+  },
+  {
+    path: "/products",
+    component: <ProductsPage/>,
+  },
+  {
+    path: "/user:id",
+    component: <UserPage />,
+  },
+  {
+    path: "/iletisim",
+    component: <Contact />,
+  },
+];
 
 const ReactRouterMain = () => {
   return (
@@ -89,13 +120,17 @@ const ReactRouterMain = () => {
             </NavLink>
           </div>
         </nav>
-        <Routes>
-          {/* Basit Route tanımı */}
-          <Route path="/" element={<HomePage />} />
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/products" element={<ProductsPage />} />
-          <Route path="/user/:id" element={<UserPage />} />
-        </Routes>
+        <div className="main-content">
+          <Routes>
+            {/* Basit Route tanımı */}
+           
+             {
+              pathList.map((pathItem) => (
+                 <Route path={pathItem.path} element={pathItem.component} />
+              ))
+             }
+          </Routes>
+        </div>
       </div>
     </BrowserRouter>
   );
