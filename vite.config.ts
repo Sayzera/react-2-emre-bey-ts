@@ -12,4 +12,8 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  server: {
+    port: 3000, // İstediğiniz port numarasını buraya yazabilirsiniz
+    open: true, // Tarayıcıyı otomatik açmak için (isteğe bağlı)
+  },
 })
