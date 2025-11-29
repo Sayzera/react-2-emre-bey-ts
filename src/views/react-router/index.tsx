@@ -7,25 +7,27 @@ import UserPage from "./pages/user/user-page";
 import ProductsPage from "./pages/products/products-page";
 import Contact from "./pages/contact";
 import type { JSX } from "react";
+import ProductsIndexPage from "./pages/products/products-index-page";
+import Layout from "./layout";
+import ProductDetailPage from "./pages/products/product-detail-page";
 
 interface PathListProps {
   path: string;
   component: JSX.Element;
 }
 
-
 const pathList: PathListProps[] = [
   {
     path: "/",
-    component:<HomePage />,
+    component: <HomePage />,
   },
   {
     path: "/about",
-    component: <AboutPage/>,
+    component: <AboutPage />,
   },
   {
     path: "/products",
-    component: <ProductsPage/>,
+    component: <ProductsPage />,
   },
   {
     path: "/user:id",
@@ -55,7 +57,6 @@ const ReactRouterMain = () => {
             <NavLink
               to={"/about"}
               className={(props) => {
-                console.log(props, "props");
                 return `nav-link ${props.isActive ? "active" : ""}`;
               }}
             >
@@ -65,7 +66,6 @@ const ReactRouterMain = () => {
             <NavLink
               to={"/iletisim"}
               className={(props) => {
-                console.log(props, "props");
                 return `nav-link ${props.isActive ? "active" : ""}`;
               }}
             >
@@ -75,7 +75,6 @@ const ReactRouterMain = () => {
             <NavLink
               to={"/urunler"}
               className={(props) => {
-                console.log(props, "props");
                 return `nav-link ${props.isActive ? "active" : ""}`;
               }}
             >
@@ -85,7 +84,6 @@ const ReactRouterMain = () => {
             <NavLink
               to={"/dashboard"}
               className={(props) => {
-                console.log(props, "props");
                 return `nav-link ${props.isActive ? "active" : ""}`;
               }}
             >
@@ -123,12 +121,24 @@ const ReactRouterMain = () => {
         <div className="main-content">
           <Routes>
             {/* Basit Route tanımı */}
-           
-             {
-              pathList.map((pathItem) => (
-                 <Route path={pathItem.path} element={pathItem.component} />
-              ))
-             }
+
+            {/* {pathList.map((pathItem) => (
+              <Route path={pathItem.path} element={pathItem.component} />
+            ))} */}
+
+           {/* <Route element={<Layout />}> */}
+              <Route path={"/"} element={<HomePage />} />
+              <Route path={"/about"} element={<HomePage />} />
+            
+              <Route path={"/urunler"} element={<ProductsPage />}>
+              <Route index element={<ProductsIndexPage />} />
+              <Route path=":productId" element={<ProductDetailPage />}/>
+
+              </Route>
+              <Route path={"/user/:id"} element={<UserPage />} />
+              <Route path={"/iletisim"} element={<Contact />} />
+
+           {/* </Route> */}
           </Routes>
         </div>
       </div>
