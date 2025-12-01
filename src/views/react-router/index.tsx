@@ -10,6 +10,10 @@ import type { JSX } from "react";
 import ProductsIndexPage from "./pages/products/products-index-page";
 import Layout from "./layout";
 import ProductDetailPage from "./pages/products/product-detail-page";
+import ProtectedRoute from "./pages/dashboard/protected-route";
+import Dashboard from "./pages/dashboard";
+import FormState from "./pages/form-state";
+import FormSuccess from "./pages/form-state/form-success";
 
 interface PathListProps {
   path: string;
@@ -131,12 +135,24 @@ const ReactRouterMain = () => {
               <Route path={"/about"} element={<HomePage />} />
             
               <Route path={"/urunler"} element={<ProductsPage />}>
-              <Route index element={<ProductsIndexPage />} />
-              <Route path=":productId" element={<ProductDetailPage />}/>
-
+                <Route index element={<ProductsIndexPage />} />
+                <Route path=":productId" element={<ProductDetailPage />}/>
               </Route>
               <Route path={"/user/:id"} element={<UserPage />} />
               <Route path={"/iletisim"} element={<Contact />} />
+
+              <Route path={"/form"} element={<FormState />} />
+              <Route path={"/form-success"} element={<FormSuccess />} />
+
+              {/* Protected Route */}
+              <Route 
+                path="/dashboard"
+                element={
+                  <ProtectedRoute>
+                      <Dashboard />
+                  </ProtectedRoute>
+                }
+              />
 
            {/* </Route> */}
           </Routes>
