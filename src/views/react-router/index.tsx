@@ -14,6 +14,7 @@ import ProtectedRoute from "./pages/dashboard/protected-route";
 import Dashboard from "./pages/dashboard";
 import FormState from "./pages/form-state";
 import FormSuccess from "./pages/form-state/form-success";
+import FilteredProducts from "./pages/filtered-products";
 
 interface PathListProps {
   path: string;
@@ -143,6 +144,8 @@ const ReactRouterMain = () => {
 
               <Route path={"/form"} element={<FormState />} />
               <Route path={"/form-success"} element={<FormSuccess />} />
+
+              <Route path="/filtered-products" element={<FilteredProducts />} />
 
               {/* Protected Route */}
               <Route 
