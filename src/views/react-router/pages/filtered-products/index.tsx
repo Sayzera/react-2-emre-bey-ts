@@ -12,6 +12,7 @@ import { useMemo } from "react";
 function FilteredProducts() {
 
   // TODO: setSearchParams kısmını nuqs kutuphanesi kullanarak yapalım 
+  // TODO: Socket.io Araştırma, react ile nasıl kullanılır nodejs tarafı nasıl yapılandırılmalı ? 
   const [searchParams, setSearchParams] = useSearchParams();
 
   // En pahalı ürünü bul
