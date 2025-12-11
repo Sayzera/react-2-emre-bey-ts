@@ -38,8 +38,8 @@ function FilteredProducts() {
         const categoryCondition =
           product.category === category || category === "all";
         const maxMinPriceCondition =
-          product.price >= Number(minPrice) &&
-          product.price <= Number(maxPrice);
+        Number(minPrice) <= product.price &&
+        Number(maxPrice) >= product.price
         const nameFilterCondition = product.name
           .toLocaleLowerCase()
           .includes(productName.toLocaleLowerCase());

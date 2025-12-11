@@ -2,6 +2,7 @@
 // import ReducerHook from "./views/useReducer"
 // import SeperReducerExample from "./views/useReducer/sepet-reducer-example"
 
+import ContextApiExampleView from "./views/context-api"
 import ReactRouterMain from "./views/react-router"
 
 // import MultipleForm from "./views/multiple-form"
@@ -18,8 +19,8 @@ function App() {
    {/* <SeperReducerExample /> */}
    {/* <NotifactionSystem /> */}
    {/* <MultipleForm /> */}
-   <ReactRouterMain />
-
+   {/* <ReactRouterMain /> */}
+<ContextApiExampleView />
    
    </>
   )
