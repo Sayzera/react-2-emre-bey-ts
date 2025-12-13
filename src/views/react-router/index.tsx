@@ -15,6 +15,7 @@ import Dashboard from "./pages/dashboard";
 import FormState from "./pages/form-state";
 import FormSuccess from "./pages/form-state/form-success";
 import FilteredProducts from "./pages/filtered-products";
+import FileUpload from "./pages/file-upload";
 
 interface PathListProps {
   path: string;
@@ -121,6 +122,15 @@ const ReactRouterMain = () => {
             >
               Relative Links
             </NavLink>
+
+            <NavLink
+              to="/file-upload"
+              className={({ isActive }) =>
+                `nav-link ${isActive ? "active" : ""}`
+              }
+            >
+              Dosya Yükleme
+            </NavLink>
           </div>
         </nav>
         <div className="main-content">
@@ -146,6 +156,8 @@ const ReactRouterMain = () => {
               <Route path={"/form-success"} element={<FormSuccess />} />
 
               <Route path="/filtered-products" element={<FilteredProducts />} />
+
+              <Route path="/file-upload" element={<FileUpload />} />
 
               {/* Protected Route */}
               <Route 
