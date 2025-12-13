@@ -11,6 +11,8 @@ const defaultConfig: FileUploadConfig = {
 
 /**
  * TODO: Webhook nedir 
+ * TODO: cloudflare storage reactla nasıl kullanılır
+ * 
  * TODOS: Kullanıcı eklenecek dosya tiplerini kendisi seçip ekleyebilmeli
  */
 
