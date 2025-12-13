@@ -10,7 +10,7 @@ const defaultConfig: FileUploadConfig = {
 };
 
 /**
- *
+ * TODO: Webhook nedir 
  * TODOS: Kullanıcı eklenecek dosya tiplerini kendisi seçip ekleyebilmeli
  */
 
