@@ -15,6 +15,7 @@ import Dashboard from "./pages/dashboard";
 import FormState from "./pages/form-state";
 import FormSuccess from "./pages/form-state/form-success";
 import FilteredProducts from "./pages/filtered-products";
+import FileUpload from "./pages/file-upload";
 
 interface PathListProps {
   path: string;
@@ -121,6 +122,15 @@ const ReactRouterMain = () => {
             >
               Relative Links
             </NavLink>
+
+            <NavLink
+              to="/file-upload"
+              className={({ isActive }) =>
+                `nav-link ${isActive ? "active" : ""}`
+              }
+            >
+              File Upload
+            </NavLink>
           </div>
         </nav>
         <div className="main-content">
@@ -131,33 +141,33 @@ const ReactRouterMain = () => {
               <Route path={pathItem.path} element={pathItem.component} />
             ))} */}
 
-           {/* <Route element={<Layout />}> */}
-              <Route path={"/"} element={<HomePage />} />
-              <Route path={"/about"} element={<HomePage />} />
-            
-              <Route path={"/urunler"} element={<ProductsPage />}>
-                <Route index element={<ProductsIndexPage />} />
-                <Route path=":productId" element={<ProductDetailPage />}/>
-              </Route>
-              <Route path={"/user/:id"} element={<UserPage />} />
-              <Route path={"/iletisim"} element={<Contact />} />
+            {/* <Route element={<Layout />}> */}
+            <Route path={"/"} element={<HomePage />} />
+            <Route path={"/about"} element={<HomePage />} />
 
-              <Route path={"/form"} element={<FormState />} />
-              <Route path={"/form-success"} element={<FormSuccess />} />
+            <Route path={"/urunler"} element={<ProductsPage />}>
+              <Route index element={<ProductsIndexPage />} />
+              <Route path=":productId" element={<ProductDetailPage />} />
+            </Route>
+            <Route path={"/user/:id"} element={<UserPage />} />
+            <Route path={"/iletisim"} element={<Contact />} />
 
-              <Route path="/filtered-products" element={<FilteredProducts />} />
+            <Route path={"/form"} element={<FormState />} />
+            <Route path={"/form-success"} element={<FormSuccess />} />
 
-              {/* Protected Route */}
-              <Route 
-                path="/dashboard"
-                element={
-                  <ProtectedRoute>
-                      <Dashboard />
-                  </ProtectedRoute>
-                }
-              />
+            <Route path="/filtered-products" element={<FilteredProducts />} />
+            <Route path="/file-upload" element={<FileUpload />} />
+            {/* Protected Route */}
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              }
+            />
 
-           {/* </Route> */}
+            {/* </Route> */}
           </Routes>
         </div>
       </div>
