@@ -4,21 +4,29 @@
 // import MultipleForm from "./views/multiple-form"
 // import NotifactionSystem from "./views/notification-managment-system"
 
-import ContextApiExampleView from "./views/context-api-2";
-import ReactRouterExample from "./views/react-router-example";
+import { ErrorBoundary } from "./components/error-boundary";
+import { ErrorThrower } from "./components/error-thrower";
+import { ErrorProvider } from "./context/error-provider";
+import ErrorHandlingExample from "./views/error-handling/ErrorHandlingExample";
 import { Toaster } from "@/components/ui/sonner";
 
 function App() {
   return (
     <>
-      <Toaster />
-      {/* <FoodApp /> */}
-      {/* <ReducerHook /> */}
-      {/* <SeperReducerExample /> */}
-      {/* <NotifactionSystem /> */}
-      {/* <MultipleForm /> */}
-      {/* <ReactRouterExample /> */}
-      <ContextApiExampleView />
+      <ErrorBoundary>
+        <ErrorProvider>
+          <ErrorThrower />
+          <Toaster />
+          {/* <FoodApp /> */}
+          {/* <ReducerHook /> */}
+          {/* <SeperReducerExample /> */}
+          {/* <NotifactionSystem /> */}
+          {/* <MultipleForm /> */}
+          {/* <ReactRouterExample /> */}
+          {/* <ContextApiExampleView /> */}
+          <ErrorHandlingExample />
+        </ErrorProvider>
+      </ErrorBoundary>
     </>
   );
 }
