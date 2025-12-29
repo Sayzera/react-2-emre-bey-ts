@@ -1,0 +1,37 @@
+{
+  "welcome": "Welcome",
+  "greeting": "Hello {{name}}!",
+  "description": "This is an i18n (internationalization) example.",
+  "changeLanguage": "Change Language",
+  "currentLanguage": "Current Language",
+  "turkish": "Turkish",
+  "english": "English",
+  "user": {
+    "name": "Name",
+    "email": "Email",
+    "age": "Age",
+    "submit": "Submit",
+    "reset": "Reset"
+  },
+  "messages": {
+    "success": "Operation successful!",
+    "error": "An error occurred!",
+    "loading": "Loading...",
+    "noData": "No data found"
+  },
+  "products": {
+    "title": "Products",
+    "addToCart": "Add to Cart",
+    "price": "Price",
+    "stock": "Stock",
+    "description": "Description"
+  },
+  "counter": {
+    "title": "Counter",
+    "increment": "Increment",
+    "decrement": "Decrement",
+    "reset": "Reset",
+    "currentValue": "Current Value: {{count}}"
+  }
+}
+

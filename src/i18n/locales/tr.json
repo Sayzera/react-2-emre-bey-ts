@@ -1,0 +1,37 @@
+{
+  "welcome": "Hoş Geldiniz",
+  "greeting": "Merhaba {{name}}!",
+  "description": "Bu bir i18n (çoklu dil desteği) örneğidir.",
+  "changeLanguage": "Dili Değiştir",
+  "currentLanguage": "Mevcut Dil",
+  "turkish": "Türkçe",
+  "english": "İngilizce",
+  "user": {
+    "name": "İsim",
+    "email": "E-posta",
+    "age": "Yaş",
+    "submit": "Gönder",
+    "reset": "Sıfırla"
+  },
+  "messages": {
+    "success": "İşlem başarılı!",
+    "error": "Bir hata oluştu!",
+    "loading": "Yükleniyor...",
+    "noData": "Veri bulunamadı"
+  },
+  "products": {
+    "title": "Ürünler",
+    "addToCart": "Sepete Ekle",
+    "price": "Fiyat",
+    "stock": "Stok",
+    "description": "Açıklama"
+  },
+  "counter": {
+    "title": "Sayaç",
+    "increment": "Artır",
+    "decrement": "Azalt",
+    "reset": "Sıfırla",
+    "currentValue": "Mevcut Değer: {{count}}"
+  }
+}
+

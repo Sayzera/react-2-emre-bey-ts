@@ -7,7 +7,8 @@
 import { ErrorBoundary } from "./components/error-boundary";
 import { ErrorThrower } from "./components/error-thrower";
 import { ErrorProvider } from "./context/error-provider";
-import ErrorHandlingExample from "./views/error-handling/ErrorHandlingExample";
+// import ErrorHandlingExample from "./views/error-handling/ErrorHandlingExample";
+import I18nExample from "./views/i18n-example";
 import { Toaster } from "@/components/ui/sonner";
 
 function App() {
@@ -24,7 +25,8 @@ function App() {
           {/* <MultipleForm /> */}
           {/* <ReactRouterExample /> */}
           {/* <ContextApiExampleView /> */}
-          <ErrorHandlingExample />
+          {/* <ErrorHandlingExample /> */}
+          <I18nExample />
         </ErrorProvider>
       </ErrorBoundary>
     </>
