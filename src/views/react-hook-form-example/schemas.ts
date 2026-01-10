@@ -102,9 +102,80 @@ export const comprehensiveFormSchema = z.object({
     .optional(),
 });
 
+/**
+ * Dosya Yükleme Schema
+ */
+export const fileUploadSchema = z.object({
+  // Profil resmi - tek dosya
+  profileImage: z
+    .instanceof(FileList)
+    .optional()
+    .refine(
+      (files) => !files || files.length === 0 || files[0].size <= 5 * 1024 * 1024,
+      "Dosya boyutu maksimum 5MB olabilir"
+    )
+    .refine(
+      (files) =>
+        !files ||
+        files.length === 0 ||
+        ["image/jpeg", "image/jpg", "image/png", "image/webp"].includes(files[0].type),
+      "Sadece JPG, PNG veya WebP formatında resim yükleyebilirsiniz"
+    ),
+
+  // CV/Özgeçmiş - tek dosya (PDF)
+  resume: z
+    .instanceof(FileList)
+    .refine((files) => files.length > 0, "CV yüklemek zorunludur")
+    .refine(
+      (files) => files[0].size <= 10 * 1024 * 1024,
+      "Dosya boyutu maksimum 10MB olabilir"
+    )
+    .refine(
+      (files) => files[0].type === "application/pdf",
+      "Sadece PDF formatında dosya yükleyebilirsiniz"
+    ),
+
+  // Çoklu dosya yükleme - belgeler
+  documents: z
+    .instanceof(FileList)
+    .optional()
+    .refine(
+      (files) => !files || files.length <= 5,
+      "Maksimum 5 dosya yükleyebilirsiniz"
+    )
+    .refine(
+      (files) => {
+        if (!files) return true;
+        return Array.from(files).every((file) => file.size <= 10 * 1024 * 1024);
+      },
+      "Her dosya maksimum 10MB olabilir"
+    )
+    .refine(
+      (files) => {
+        if (!files) return true;
+        const allowedTypes = [
+          "application/pdf",
+          "application/msword",
+          "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+          "image/jpeg",
+          "image/jpg",
+          "image/png",
+        ];
+        return Array.from(files).every((file) => allowedTypes.includes(file.type));
+      },
+      "Sadece PDF, DOC, DOCX, JPG, PNG formatlarında dosya yükleyebilirsiniz"
+    ),
+
+  // Ek bilgiler
+  name: z.string().min(2, "İsim en az 2 karakter olmalıdır"),
+  email: z.string().email("Geçerli bir email adresi giriniz"),
+  description: z.string().optional(),
+});
+
 // Type inference için
 export type UserInfoFormData = z.infer<typeof userInfoSchema>;
 export type AddressFormData = z.infer<typeof addressSchema>;
 export type PreferencesFormData = z.infer<typeof preferencesSchema>;
 export type ComprehensiveFormData = z.infer<typeof comprehensiveFormSchema>;
+export type FileUploadFormData = z.infer<typeof fileUploadSchema>;
 

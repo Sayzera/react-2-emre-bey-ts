@@ -29,8 +29,10 @@ import { toast } from "sonner";
 import {
   comprehensiveFormSchema,
   type ComprehensiveFormData,
+  fileUploadSchema,
+  type FileUploadFormData,
 } from "./schemas";
-import { Eye, EyeOff, RefreshCw, Save, CheckCircle2 } from "lucide-react";
+import { Eye, EyeOff, RefreshCw, Save, CheckCircle2, Upload, FileText, X, Image as ImageIcon } from "lucide-react";
 import { useState } from "react";
 
 /**
@@ -856,5 +858,477 @@ const onSubmit = (data) => {
   );
 }
 
+/**
+ * Dosya Yükleme Form Örneği
+ * React Hook Form ile dosya işlemleri
+ */
+function FileUploadExample() {
+  const [profilePreview, setProfilePreview] = useState<string | null>(null);
+  const [documentPreviews, setDocumentPreviews] = useState<Array<{ name: string; size: string; type: string }>>([]);
+
+  const fileForm = useForm<FileUploadFormData>({
+    resolver: zodResolver(fileUploadSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      description: "",
+    },
+  });
+
+  // Dosya boyutunu formatlama
+  const formatFileSize = (bytes: number): string => {
+    if (bytes === 0) return "0 Bytes";
+    const k = 1024;
+    const sizes = ["Bytes", "KB", "MB", "GB"];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return Math.round(bytes / Math.pow(k, i) * 100) / 100 + " " + sizes[i];
+  };
+
+  // Profil resmi önizleme
+  const handleProfileImageChange = (files: FileList | null) => {
+    if (files && files.length > 0) {
+      const file = files[0];
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setProfilePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setProfilePreview(null);
+    }
+  };
+
+  // Çoklu dosya önizleme
+  const handleDocumentsChange = (files: FileList | null) => {
+    if (files && files.length > 0) {
+      const previews = Array.from(files).map((file) => ({
+        name: file.name,
+        size: formatFileSize(file.size),
+        type: file.type,
+      }));
+      setDocumentPreviews(previews);
+    } else {
+      setDocumentPreviews([]);
+    }
+  };
+
+  // Form submit
+  const onFileSubmit = (data: FileUploadFormData) => {
+    console.log("Form Data:", {
+      name: data.name,
+      email: data.email,
+      description: data.description,
+      profileImage: data.profileImage?.[0],
+      resume: data.resume?.[0],
+      documents: data.documents ? Array.from(data.documents) : [],
+    });
+
+    toast.success("Dosyalar başarıyla yüklendi!", {
+      description: `${data.name} - Dosya yükleme işlemi tamamlandı`,
+    });
+  };
+
+  const resetFileForm = () => {
+    fileForm.reset();
+    setProfilePreview(null);
+    setDocumentPreviews([]);
+    toast.info("Form sıfırlandı");
+  };
+
+  return (
+    <div className="w-[90%] mx-auto p-5 space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle>Dosya İşlemleri - React Hook Form</CardTitle>
+          <CardDescription>
+            Dosya yükleme, validasyon ve önizleme örnekleri
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Form {...fileForm}>
+            <form onSubmit={fileForm.handleSubmit(onFileSubmit)} className="space-y-6">
+              {/* Kişisel Bilgiler */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Kişisel Bilgiler</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <FormField
+                    control={fileForm.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Ad Soyad *</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Adınız ve soyadınız" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={fileForm.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Email *</FormLabel>
+                        <FormControl>
+                          <Input type="email" placeholder="ornek@email.com" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={fileForm.control}
+                    name="description"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Açıklama</FormLabel>
+                        <FormControl>
+                          <Textarea placeholder="Kısa bir açıklama..." {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </CardContent>
+              </Card>
+
+              {/* Profil Resmi */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <ImageIcon className="w-5 h-5" />
+                    Profil Resmi (Opsiyonel)
+                  </CardTitle>
+                  <CardDescription>
+                    JPG, PNG veya WebP formatında, maksimum 5MB
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <FormField
+                    control={fileForm.control}
+                    name="profileImage"
+                    render={({ field: { onChange, value, ...field } }) => (
+                      <FormItem>
+                        <FormLabel>Resim Seç</FormLabel>
+                        <FormControl>
+                          <div className="space-y-4">
+                            <div className="flex items-center gap-4">
+                              <Input
+                                type="file"
+                                accept="image/jpeg,image/jpg,image/png,image/webp"
+                                onChange={(e) => {
+                                  onChange(e.target.files);
+                                  handleProfileImageChange(e.target.files);
+                                }}
+                                {...field}
+                                className="cursor-pointer"
+                              />
+                              {profilePreview && (
+                                <Button
+                                  type="button"
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => {
+                                    onChange(null);
+                                    setProfilePreview(null);
+                                    const input = document.querySelector('input[type="file"][accept*="image"]') as HTMLInputElement;
+                                    if (input) input.value = "";
+                                  }}
+                                >
+                                  <X className="w-4 h-4" />
+                                </Button>
+                              )}
+                            </div>
+
+                            {/* Önizleme */}
+                            {profilePreview && (
+                              <div className="border rounded-lg p-4 bg-muted">
+                                <p className="text-sm font-medium mb-2">Önizleme:</p>
+                                <img
+                                  src={profilePreview}
+                                  alt="Profil önizleme"
+                                  className="w-32 h-32 object-cover rounded-lg border"
+                                />
+                              </div>
+                            )}
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </CardContent>
+              </Card>
+
+              {/* CV/Özgeçmiş */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <FileText className="w-5 h-5" />
+                    CV / Özgeçmiş (Zorunlu)
+                  </CardTitle>
+                  <CardDescription>
+                    PDF formatında, maksimum 10MB
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <FormField
+                    control={fileForm.control}
+                    name="resume"
+                    render={({ field: { onChange, value, ...field } }) => (
+                      <FormItem>
+                        <FormLabel>PDF Dosya Seç *</FormLabel>
+                        <FormControl>
+                          <div className="space-y-4">
+                            <Input
+                              type="file"
+                              accept="application/pdf"
+                              onChange={(e) => onChange(e.target.files)}
+                              {...field}
+                              className="cursor-pointer"
+                            />
+
+                            {/* Dosya bilgisi */}
+                            {value && value.length > 0 && (
+                              <div className="border rounded-lg p-4 bg-muted">
+                                <div className="flex items-center gap-3">
+                                  <FileText className="w-8 h-8 text-red-500" />
+                                  <div className="flex-1">
+                                    <p className="font-medium">{value[0].name}</p>
+                                    <p className="text-sm text-muted-foreground">
+                                      {formatFileSize(value[0].size)}
+                                    </p>
+                                  </div>
+                                  <Badge variant="outline">PDF</Badge>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </CardContent>
+              </Card>
+
+              {/* Çoklu Dosya Yükleme */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Upload className="w-5 h-5" />
+                    Ek Belgeler (Opsiyonel)
+                  </CardTitle>
+                  <CardDescription>
+                    PDF, DOC, DOCX, JPG, PNG formatlarında, her biri maksimum 10MB, toplam 5 dosya
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <FormField
+                    control={fileForm.control}
+                    name="documents"
+                    render={({ field: { onChange, value, ...field } }) => (
+                      <FormItem>
+                        <FormLabel>Dosyaları Seç</FormLabel>
+                        <FormControl>
+                          <div className="space-y-4">
+                            <Input
+                              type="file"
+                              multiple
+                              accept="application/pdf,.doc,.docx,image/jpeg,image/jpg,image/png"
+                              onChange={(e) => {
+                                onChange(e.target.files);
+                                handleDocumentsChange(e.target.files);
+                              }}
+                              {...field}
+                              className="cursor-pointer"
+                            />
+
+                            {/* Dosya listesi */}
+                            {documentPreviews.length > 0 && (
+                              <div className="border rounded-lg p-4 bg-muted space-y-2">
+                                <p className="text-sm font-medium mb-2">
+                                  Seçilen dosyalar ({documentPreviews.length}):
+                                </p>
+                                <div className="space-y-2">
+                                  {documentPreviews.map((doc, index) => (
+                                    <div
+                                      key={index}
+                                      className="flex items-center gap-3 p-2 bg-background rounded border"
+                                    >
+                                      <FileText className="w-6 h-6 text-blue-500" />
+                                      <div className="flex-1 min-w-0">
+                                        <p className="font-medium text-sm truncate">{doc.name}</p>
+                                        <p className="text-xs text-muted-foreground">{doc.size}</p>
+                                      </div>
+                                      <Badge variant="secondary" className="text-xs">
+                                        {index + 1}
+                                      </Badge>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </CardContent>
+              </Card>
+
+              {/* Form Butonları */}
+              <div className="flex gap-2 flex-wrap">
+                <Button type="submit" disabled={!fileForm.formState.isValid}>
+                  <Upload className="w-4 h-4 mr-2" />
+                  Dosyaları Yükle
+                </Button>
+                <Button type="button" variant="outline" onClick={resetFileForm}>
+                  <RefreshCw className="w-4 h-4 mr-2" />
+                  Sıfırla
+                </Button>
+              </div>
+            </form>
+          </Form>
+
+          {/* Bilgi Kutuları */}
+          <div className="mt-6 space-y-4">
+            <Separator />
+            
+            <Card className="bg-blue-50 dark:bg-blue-950 border-blue-200 dark:border-blue-800">
+              <CardHeader>
+                <CardTitle className="text-lg">💡 Dosya Yükleme İpuçları</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="space-y-2 text-sm">
+                  <div className="flex items-start gap-2">
+                    <CheckCircle2 className="w-4 h-4 mt-0.5 text-green-600" />
+                    <div>
+                      <strong>Tek Dosya:</strong> <code className="bg-muted px-1 py-0.5 rounded">type="file"</code> ile tek dosya seçimi
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <CheckCircle2 className="w-4 h-4 mt-0.5 text-green-600" />
+                    <div>
+                      <strong>Çoklu Dosya:</strong> <code className="bg-muted px-1 py-0.5 rounded">multiple</code> attribute ile birden fazla dosya
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <CheckCircle2 className="w-4 h-4 mt-0.5 text-green-600" />
+                    <div>
+                      <strong>Dosya Tipi:</strong> <code className="bg-muted px-1 py-0.5 rounded">accept</code> ile sadece belirli dosya tiplerini kabul etme
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <CheckCircle2 className="w-4 h-4 mt-0.5 text-green-600" />
+                    <div>
+                      <strong>Validasyon:</strong> Zod ile dosya boyutu ve tip kontrolü
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <CheckCircle2 className="w-4 h-4 mt-0.5 text-green-600" />
+                    <div>
+                      <strong>Önizleme:</strong> FileReader API ile resim önizleme
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">📝 Kod Örnekleri</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div>
+                    <h4 className="font-semibold mb-2">1. Schema Tanımlama (Zod)</h4>
+                    <pre className="text-xs bg-muted p-3 rounded overflow-auto">
+{`const schema = z.object({
+  profileImage: z
+    .instanceof(FileList)
+    .refine(
+      (files) => files[0].size <= 5 * 1024 * 1024,
+      "Maksimum 5MB"
+    )
+    .refine(
+      (files) => ["image/jpeg", "image/png"].includes(files[0].type),
+      "Sadece JPG veya PNG"
+    ),
+});`}
+                    </pre>
+                  </div>
+
+                  <div>
+                    <h4 className="font-semibold mb-2">2. Form Field Kullanımı</h4>
+                    <pre className="text-xs bg-muted p-3 rounded overflow-auto">
+{`<FormField
+  control={form.control}
+  name="profileImage"
+  render={({ field: { onChange, value, ...field } }) => (
+    <FormItem>
+      <Input
+        type="file"
+        accept="image/*"
+        onChange={(e) => onChange(e.target.files)}
+        {...field}
+      />
+    </FormItem>
+  )}
+/>`}
+                    </pre>
+                  </div>
+
+                  <div>
+                    <h4 className="font-semibold mb-2">3. Dosya Önizleme</h4>
+                    <pre className="text-xs bg-muted p-3 rounded overflow-auto">
+{`const handleImageChange = (files: FileList | null) => {
+  if (files && files.length > 0) {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setPreview(reader.result as string);
+    };
+    reader.readAsDataURL(files[0]);
+  }
+};`}
+                    </pre>
+                  </div>
+
+                  <div>
+                    <h4 className="font-semibold mb-2">4. Form Submit</h4>
+                    <pre className="text-xs bg-muted p-3 rounded overflow-auto">
+{`const onSubmit = (data: FormData) => {
+  const file = data.profileImage?.[0];
+  console.log(file.name, file.size, file.type);
+  
+  // FormData ile sunucuya gönderme
+  const formData = new FormData();
+  formData.append("file", file);
+  
+  // API çağrısı
+  fetch("/api/upload", {
+    method: "POST",
+    body: formData
+  });
+};`}
+                    </pre>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
 export default ReactHookFormExample;
+export { FileUploadExample };
 
