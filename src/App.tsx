@@ -9,6 +9,7 @@ import { ErrorThrower } from "./components/error-thrower";
 import { ErrorProvider } from "./context/error-provider";
 import ErrorHandlingExample from "./views/error-handling/ErrorHandlingExample";
 import { Toaster } from "@/components/ui/sonner";
+import BasicFormHook from "./views/react-form-hook/basic";
 
 function App() {
   return (
@@ -24,7 +25,8 @@ function App() {
           {/* <MultipleForm /> */}
           {/* <ReactRouterExample /> */}
           {/* <ContextApiExampleView /> */}
-          <ErrorHandlingExample />
+          {/* <ErrorHandlingExample /> */}
+          <BasicFormHook />
         </ErrorProvider>
       </ErrorBoundary>
     </>
