@@ -7,10 +7,11 @@
 import { ErrorBoundary } from "./components/error-boundary";
 import { ErrorThrower } from "./components/error-thrower";
 import { ErrorProvider } from "./context/error-provider";
-import ErrorHandlingExample from "./views/error-handling/ErrorHandlingExample";
+// import ErrorHandlingExample from "./views/error-handling/ErrorHandlingExample";
 import { Toaster } from "@/components/ui/sonner";
-import BasicFormHook from "./views/react-form-hook/basic";
-import AdvancedFormHook from "./views/react-form-hook/advanced";
+// import BasicFormHook from "./views/react-form-hook/basic";
+// import AdvancedFormHook from "./views/react-form-hook/advanced";
+import TanStackQueryExamples from "./views/tanstack-query";
 
 function App() {
   return (
@@ -28,7 +29,8 @@ function App() {
           {/* <ContextApiExampleView /> */}
           {/* <ErrorHandlingExample /> */}
           {/* <BasicFormHook /> */}
-          <AdvancedFormHook />
+          {/* <AdvancedFormHook /> */}
+          <TanStackQueryExamples />
         </ErrorProvider>
       </ErrorBoundary>
     </>
