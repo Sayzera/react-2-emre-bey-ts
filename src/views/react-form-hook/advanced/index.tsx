@@ -19,22 +19,52 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useEffect } from "react";
 import { Textarea } from "@/components/ui/textarea";
 
+const countries = [
+  "Türkiye",
+  "ABD",
+  "Almanya",
+  "Fransa",
+  "İngiltere",
+  "İtalya",
+  "İspanya",
+  "Rusya",
+  "Çin",
+  "Japonya",
+  "Hindistan",
+  "Brezilya",
+  "Kanada",
+  "Meksika",
+  "Avustralya",
+  "Norveç",
+  "İsveç",
+  "Hollanda",
+  "Yunanistan",
+  "Portekiz",
+];
 
+const countryCities: Record<
+  string,
+  { id: number; value: string }[] | string[]
+> = {
+  //Record<Keys, Type>  Keys: obje anahtarlarının tipi (key) Type: o anahtarlara karşılık gelen değer tipi (value)
 
-
-const countries = ["Türkiye", "ABD",
-  "Almanya", "Fransa", "İngiltere", "İtalya",
-  "İspanya", "Rusya", "Çin", "Japonya", "Hindistan",
-  "Brezilya", "Kanada", "Meksika", "Avustralya",
-  "Norveç", "İsveç", "Hollanda", "Yunanistan", "Portekiz"];
-
-const countryCities: Record<string, string[]> = {  //Record<Keys, Type>  Keys: obje anahtarlarının tipi (key) Type: o anahtarlara karşılık gelen değer tipi (value)
-
-  Türkiye: ["İstanbul", "Ankara", "İzmir", "Bursa", "Antalya"],
+  Türkiye: [
+    { id: 1, value: "İstanbul" },
+    { id: 2, value: "Ankara" },
+    { id: 3, value: "İzmir" },
+    { id: 4, value: "Bursa" },
+    { id: 5, value: "Antalya" },
+  ],
   ABD: ["New York", "Los Angeles", "Chicago", "Houston", "Miami"],
   Almanya: ["Berlin", "Hamburg", "Münih", "Frankfurt", "Köln"],
   Fransa: ["Paris", "Lyon", "Marsilya", "Nice", "Toulouse"],
@@ -45,7 +75,13 @@ const countryCities: Record<string, string[]> = {  //Record<Keys, Type>  Keys: o
   Çin: ["Pekin", "Şanghay", "Guangzhou", "Shenzhen", "Chengdu"],
   Japonya: ["Tokyo", "Osaka", "Kyoto", "Nagoya", "Sapporo"],
   Hindistan: ["Delhi", "Mumbai", "Bangalore", "Hyderabad", "Kolkata"],
-  Brezilya: ["Rio de Janeiro", "São Paulo", "Brasília", "Salvador", "Fortaleza"],
+  Brezilya: [
+    "Rio de Janeiro",
+    "São Paulo",
+    "Brasília",
+    "Salvador",
+    "Fortaleza",
+  ],
   Kanada: ["Toronto", "Vancouver", "Montreal", "Calgary", "Ottawa"],
   Meksika: ["Mexico City", "Guadalajara", "Monterrey", "Cancún", "Puebla"],
   Avustralya: ["Sydney", "Melbourne", "Brisbane", "Perth", "Adelaide"],
@@ -55,8 +91,6 @@ const countryCities: Record<string, string[]> = {  //Record<Keys, Type>  Keys: o
   Yunanistan: ["Atina", "Selanik", "Patras", "Heraklion", "Larisa"],
   Portekiz: ["Lizbon", "Porto", "Coimbra", "Braga", "Funchal"],
 };
-
-
 
 function AdvancedFormHook() {
   const form = useForm({
@@ -76,15 +110,15 @@ function AdvancedFormHook() {
     },
     mode: "onChange",
   });
-  const selectedCountry = form.watch("country");                              // ülke seçimini takip etmek için form.watch kullanılmalı
+  const selectedCountry = form.watch("country"); // ülke seçimini takip etmek için form.watch kullanılmalı
   const cities = selectedCountry ? countryCities[selectedCountry] || [] : []; //cites kısmı için seçilen country'deki şehirleri aldık
-
 
   useEffect(() => {
     form.setValue("city", "");
   }, [selectedCountry]);
 
-  const onSubmit = (data: ComprehensiveFormData) => { // bu kısmı tam anlamamışım
+  const onSubmit = (data: ComprehensiveFormData) => {
+    // bu kısmı tam anlamamışım
     console.log(data, "data");
   };
 
@@ -95,23 +129,24 @@ function AdvancedFormHook() {
   return (
     <div className="w-[90%] mx-auto p-5 space-y-6">
       <Card>
-        <CardHeader >
+        <CardHeader>
           <CardTitle>Kapsamlı React Form Hook</CardTitle>
           <CardDescription>React form hook'un tüm özellikleri</CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <form onSubmit={form.handleSubmit(onSubmit)} >
               <Card>
                 <CardHeader>
                   <CardTitle>Kişisel Bilgiler</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-2 gap-4 space-y-2">
                     <FormField
                       control={form.control}
                       name="firstName"
-                      render={({ field}) => {            //TODO:  field tam olarak nedir ?
+                      render={({ field }) => {
+                        //TODO:  field tam olarak nedir ?
                         return (
                           <FormItem>
                             <FormLabel>Ad *</FormLabel>
@@ -125,7 +160,6 @@ function AdvancedFormHook() {
                             <FormDescription>İsminizi giriniz</FormDescription>
                             <FormMessage />
                           </FormItem>
-
                         );
                       }}
                     />
@@ -137,12 +171,17 @@ function AdvancedFormHook() {
                           <FormItem>
                             <FormLabel>Soyad *</FormLabel>
                             <FormControl>
-                              <Input onChange={field.onChange} placeholder="Soyadınız" />
+                              <Input
+                                onChange={field.onChange}
+                                placeholder="Soyadınız"
+                              />
                             </FormControl>
-                            <FormDescription>Soy isminizi giriniz</FormDescription>
+                            <FormDescription>
+                              Soy isminizi giriniz
+                            </FormDescription>
                             <FormMessage />
                           </FormItem>
-                        )
+                        );
                       }}
                     />
 
@@ -154,13 +193,16 @@ function AdvancedFormHook() {
                           <FormItem>
                             <FormLabel>Yaş *</FormLabel>
                             <FormControl>
-                              <Input type="number" placeholder="Yaşınız " {...field} />
+                              <Input
+                                type="number"
+                                placeholder="Yaşınız "
+                                {...field}
+                              />
                             </FormControl>
                             <FormDescription>Yaşınızı giriniz</FormDescription>
                             <FormMessage />
                           </FormItem>
-
-                        )
+                        );
                       }}
                     />
 
@@ -172,12 +214,19 @@ function AdvancedFormHook() {
                           <FormItem>
                             <FormLabel>Telefon *</FormLabel>
                             <FormControl>
-                              <Input type="tel" onChange={field.onChange} placeholder="Telefon numaranız " />
+                              <Input
+                                type="tel"
+                                onChange={field.onChange}
+                                placeholder="Telefon numaranız "
+                              />
                             </FormControl>
-                            <FormDescription> Telefon numaranızı giriniz</FormDescription>
+                            <FormDescription>
+                              {" "}
+                              Telefon numaranızı giriniz
+                            </FormDescription>
                             <FormMessage />
                           </FormItem>
-                        )
+                        );
                       }}
                     />
 
@@ -189,12 +238,17 @@ function AdvancedFormHook() {
                           <FormItem>
                             <FormLabel>E-Posta *</FormLabel>
                             <FormControl>
-                              <Input onChange={(e) => field.onChange(e)} placeholder="E-Posta giriniz" />
+                              <Input
+                                onChange={(e) => field.onChange(e)}
+                                placeholder="E-Posta giriniz"
+                              />
                             </FormControl>
-                            <FormDescription>E-Posta adresinizi giriniz</FormDescription>
+                            <FormDescription>
+                              E-Posta adresinizi giriniz
+                            </FormDescription>
                             <FormMessage />
                           </FormItem>
-                        )
+                        );
                       }}
                     />
 
@@ -206,12 +260,17 @@ function AdvancedFormHook() {
                           <FormItem>
                             <FormLabel>Zip-kodu *</FormLabel>
                             <FormControl>
-                              <Input placeholder="Zip Kodunu giriniz" onChange={(e) => field.onChange(e)} />
+                              <Input
+                                placeholder="Zip Kodunu giriniz"
+                                onChange={(e) => field.onChange(e)}
+                              />
                             </FormControl>
-                            <FormDescription>Zip Kodunuzu giriniz </FormDescription>
+                            <FormDescription>
+                              Zip Kodunuzu giriniz{" "}
+                            </FormDescription>
                             <FormMessage />
                           </FormItem>
-                        )
+                        );
                       }}
                     />
 
@@ -223,7 +282,10 @@ function AdvancedFormHook() {
                           <FormItem>
                             <FormLabel>Ülke *</FormLabel>
                             <FormControl>
-                              <Select value={field.value} onValueChange={field.onChange}>
+                              <Select
+                                value={field.value}
+                                onValueChange={field.onChange}
+                              >
                                 <SelectTrigger>
                                   <SelectValue placeholder="Ülke seçiniz" />
                                 </SelectTrigger>
@@ -233,14 +295,12 @@ function AdvancedFormHook() {
                                       {country}
                                     </SelectItem>
                                   ))}
-
                                 </SelectContent>
-
                               </Select>
                             </FormControl>
                             <FormMessage />
                           </FormItem>
-                        )
+                        );
                       }}
                     />
 
@@ -252,21 +312,27 @@ function AdvancedFormHook() {
                           <FormItem>
                             <FormLabel>Şehir *</FormLabel>
                             <FormControl>
-                              <Select value={field.value} onValueChange={field.onChange}>
+                              <Select
+                                value={field.value}
+                                onValueChange={field.onChange}
+                              >
                                 <SelectTrigger>
                                   <SelectValue placeholder="Şehir seçiniz" />
                                 </SelectTrigger>
                                 <SelectContent className="max-h-60 overflow-y-auto">
-                                  {cities.map((city) => (
-                                    <SelectItem key={city} value={city}>
-                                      {city}
+                                  {cities.map((city: any) => (
+                                    <SelectItem
+                                      key={city.id}
+                                      value={city.value}
+                                    >
+                                      {city.value}
                                     </SelectItem>
                                   ))}
                                 </SelectContent>
                               </Select>
                             </FormControl>
                           </FormItem>
-                        )
+                        );
                       }}
                     />
 
@@ -281,10 +347,12 @@ function AdvancedFormHook() {
                               <Textarea
                                 placeholder="Adresinizi giriniz"
                                 {...field} // value ve onChange burada bağlanıyor
-                                rows={4}  // yüksekliğini ayarlamak için
+                                rows={4} // yüksekliğini ayarlamak için
                               />
                             </FormControl>
-                            <FormDescription>Adresiniz en az 10 karakter olmalıdır</FormDescription>
+                            <FormDescription>
+                              Adresiniz en az 10 karakter olmalıdır
+                            </FormDescription>
                             <FormMessage />
                           </FormItem>
                         );
@@ -293,7 +361,13 @@ function AdvancedFormHook() {
                   </div>
 
                   <Button type="submit">Formu Gönder</Button>
-                  <Button type="reset" onClick={handleReset} className="ml-2 bg-red-700">Reset</Button>
+                  <Button
+                    type="reset"
+                    onClick={handleReset}
+                    className="ml-2 bg-red-700"
+                  >
+                    Reset
+                  </Button>
                 </CardContent>
               </Card>
             </form>

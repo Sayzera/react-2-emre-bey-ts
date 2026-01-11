@@ -11,6 +11,7 @@ import ErrorHandlingExample from "./views/error-handling/ErrorHandlingExample";
 import { Toaster } from "@/components/ui/sonner";
 import BasicFormHook from "./views/react-form-hook/basic";
 import AdvancedFormHook from "./views/react-form-hook/advanced";
+import ReactHookFormExampleFileUpload from "./views/react-form-hook/file-upload";
 
 function App() {
   return (
@@ -28,7 +29,8 @@ function App() {
           {/* <ContextApiExampleView /> */}
           {/* <ErrorHandlingExample /> */}
           {/* <BasicFormHook /> */}
-          <AdvancedFormHook />
+          {/* <AdvancedFormHook /> */}
+          <ReactHookFormExampleFileUpload />
         </ErrorProvider>
       </ErrorBoundary>
     </>
