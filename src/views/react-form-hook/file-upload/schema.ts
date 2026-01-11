@@ -2,7 +2,7 @@ import { z } from "zod";
 
 
 /**
- * File dersinde yaptığımız ders ile bugunkü dersimiz birleştirilecektir
+ * TODO: File dersinde yaptığımız ders ile bugunkü dersimiz birleştirilecektir
  * 
  * kullanıcının profil resmi altta profil resmi kartında önizlenecek ve isterse kaldırabilecektir
  * 
@@ -10,6 +10,8 @@ import { z } from "zod";
  * 
  * ve inputlara value bağlananama konusu araştırılaak ve çözümü için denemeler yapılacaktır.
  * 
+ * 
+ * TODO: i18n, dark light mode ve exchange mode, 
  */
 
 export const fileUploadSchema = z.object({
