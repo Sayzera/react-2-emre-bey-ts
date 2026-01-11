@@ -13,19 +13,31 @@ export const comprehensiveFormSchema = z.object({
     .string({ error: errorMessages.string })
     .min(2, "Soyad en az 2 karekter olmalıdır")
     .max(50, "Soyad maksimum 50 karekter olmalıdır"),
+  // age: z
+  //   .number()
+  //   .min(18, "Yaş en 18 olmalıdır")
+  //   .max(100, "Yaş en fazla 100 olmalıdır")
+  //   .optional(),
+  age: z
+    .string()
+    .optional()
+    .refine((val) => !val || (Number(val) >= 18 && Number(val) <= 100), {
+      message: "Yaş 18-100 arasında olmalıdır",
+    }),
+  // phone: z
+  //   .string()
+  //   .regex(/^[0-9]{10,11}$/, "Telefon numarası 10-11 haneli olmalıdır")
+  //   .optional(),
+  phone: z
+    .string()
+    .optional()
+    .refine((val) => !val || /^[0-9]{10,11}$/.test(val), {
+      message: "Telefon numarası 10-11 haneli olmalıdır",
+    }),
   email: z
     .string({ error: errorMessages.string })
     .trim()
     .pipe(z.email({ error: "Lütfen geçerli bir e-posta giriniz" })),
-  age: z
-    .number()
-    .min(18, "Yaş en 18 olmalıdır")
-    .max(100, "Yaş en fazla 100 olmalıdır")
-    .optional(),
-  phone: z
-    .string()
-    .regex(/^[0-9]{10,11}$/, "Telefon numarası 10-11 haneli olmalıdır")
-    .optional(),
 
   // Adres Bilgileri
   /**

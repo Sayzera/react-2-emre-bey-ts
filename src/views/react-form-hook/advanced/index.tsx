@@ -19,6 +19,44 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useEffect } from "react";
+import { Textarea } from "@/components/ui/textarea";
+
+
+
+
+const countries = ["Türkiye", "ABD",
+  "Almanya", "Fransa", "İngiltere", "İtalya",
+  "İspanya", "Rusya", "Çin", "Japonya", "Hindistan",
+  "Brezilya", "Kanada", "Meksika", "Avustralya",
+  "Norveç", "İsveç", "Hollanda", "Yunanistan", "Portekiz"];
+
+const countryCities: Record<string, string[]> = {  //Record<Keys, Type>  Keys: obje anahtarlarının tipi (key) Type: o anahtarlara karşılık gelen değer tipi (value)
+
+  Türkiye: ["İstanbul", "Ankara", "İzmir", "Bursa", "Antalya"],
+  ABD: ["New York", "Los Angeles", "Chicago", "Houston", "Miami"],
+  Almanya: ["Berlin", "Hamburg", "Münih", "Frankfurt", "Köln"],
+  Fransa: ["Paris", "Lyon", "Marsilya", "Nice", "Toulouse"],
+  İngiltere: ["Londra", "Manchester", "Birmingham", "Liverpool", "Leeds"],
+  İtalya: ["Roma", "Milano", "Venedik", "Napoli", "Torino"],
+  İspanya: ["Madrid", "Barselona", "Valensiya", "Sevilla", "Bilbao"],
+  Rusya: ["Moskova", "St. Petersburg", "Novosibirsk", "Kazan", "Soçi"],
+  Çin: ["Pekin", "Şanghay", "Guangzhou", "Shenzhen", "Chengdu"],
+  Japonya: ["Tokyo", "Osaka", "Kyoto", "Nagoya", "Sapporo"],
+  Hindistan: ["Delhi", "Mumbai", "Bangalore", "Hyderabad", "Kolkata"],
+  Brezilya: ["Rio de Janeiro", "São Paulo", "Brasília", "Salvador", "Fortaleza"],
+  Kanada: ["Toronto", "Vancouver", "Montreal", "Calgary", "Ottawa"],
+  Meksika: ["Mexico City", "Guadalajara", "Monterrey", "Cancún", "Puebla"],
+  Avustralya: ["Sydney", "Melbourne", "Brisbane", "Perth", "Adelaide"],
+  Norveç: ["Oslo", "Bergen", "Trondheim", "Stavanger", "Tromsø"],
+  İsveç: ["Stockholm", "Göteborg", "Malmö", "Uppsala", "Västerås"],
+  Hollanda: ["Amsterdam", "Rotterdam", "Utrecht", "Eindhoven", "Groningen"],
+  Yunanistan: ["Atina", "Selanik", "Patras", "Heraklion", "Larisa"],
+  Portekiz: ["Lizbon", "Porto", "Coimbra", "Braga", "Funchal"],
+};
+
+
 
 function AdvancedFormHook() {
   const form = useForm({
@@ -27,8 +65,10 @@ function AdvancedFormHook() {
       firstName: "",
       lastName: "",
       email: "",
-      age: undefined,
-      phone: undefined,
+      // age: undefined,
+      age: "",
+      // phone: undefined,
+      phone: "",
       country: "",
       city: "",
       adres: "",
@@ -36,8 +76,15 @@ function AdvancedFormHook() {
     },
     mode: "onChange",
   });
+  const selectedCountry = form.watch("country");                              // ülke seçimini takip etmek için form.watch kullanılmalı
+  const cities = selectedCountry ? countryCities[selectedCountry] || [] : []; //cites kısmı için seçilen country'deki şehirleri aldık
 
-  const onSubmit = (data: ComprehensiveFormData) => {
+
+  useEffect(() => {
+    form.setValue("city", "");
+  }, [selectedCountry]);
+
+  const onSubmit = (data: ComprehensiveFormData) => { // bu kısmı tam anlamamışım
     console.log(data, "data");
   };
 
@@ -48,7 +95,7 @@ function AdvancedFormHook() {
   return (
     <div className="w-[90%] mx-auto p-5 space-y-6">
       <Card>
-        <CardHeader>
+        <CardHeader >
           <CardTitle>Kapsamlı React Form Hook</CardTitle>
           <CardDescription>React form hook'un tüm özellikleri</CardDescription>
         </CardHeader>
@@ -64,7 +111,7 @@ function AdvancedFormHook() {
                     <FormField
                       control={form.control}
                       name="firstName"
-                      render={({ field }) => {
+                      render={({ field}) => {            //TODO:  field tam olarak nedir ?
                         return (
                           <FormItem>
                             <FormLabel>Ad *</FormLabel>
@@ -78,12 +125,175 @@ function AdvancedFormHook() {
                             <FormDescription>İsminizi giriniz</FormDescription>
                             <FormMessage />
                           </FormItem>
+
+                        );
+                      }}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="lastName"
+                      render={({ field }) => {
+                        return (
+                          <FormItem>
+                            <FormLabel>Soyad *</FormLabel>
+                            <FormControl>
+                              <Input onChange={field.onChange} placeholder="Soyadınız" />
+                            </FormControl>
+                            <FormDescription>Soy isminizi giriniz</FormDescription>
+                            <FormMessage />
+                          </FormItem>
+                        )
+                      }}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="age"
+                      render={({ field }) => {
+                        return (
+                          <FormItem>
+                            <FormLabel>Yaş *</FormLabel>
+                            <FormControl>
+                              <Input type="number" placeholder="Yaşınız " {...field} />
+                            </FormControl>
+                            <FormDescription>Yaşınızı giriniz</FormDescription>
+                            <FormMessage />
+                          </FormItem>
+
+                        )
+                      }}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="phone"
+                      render={({ field }) => {
+                        return (
+                          <FormItem>
+                            <FormLabel>Telefon *</FormLabel>
+                            <FormControl>
+                              <Input type="tel" onChange={field.onChange} placeholder="Telefon numaranız " />
+                            </FormControl>
+                            <FormDescription> Telefon numaranızı giriniz</FormDescription>
+                            <FormMessage />
+                          </FormItem>
+                        )
+                      }}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="email"
+                      render={({ field }) => {
+                        return (
+                          <FormItem>
+                            <FormLabel>E-Posta *</FormLabel>
+                            <FormControl>
+                              <Input onChange={(e) => field.onChange(e)} placeholder="E-Posta giriniz" />
+                            </FormControl>
+                            <FormDescription>E-Posta adresinizi giriniz</FormDescription>
+                            <FormMessage />
+                          </FormItem>
+                        )
+                      }}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="zipCode"
+                      render={({ field }) => {
+                        return (
+                          <FormItem>
+                            <FormLabel>Zip-kodu *</FormLabel>
+                            <FormControl>
+                              <Input placeholder="Zip Kodunu giriniz" onChange={(e) => field.onChange(e)} />
+                            </FormControl>
+                            <FormDescription>Zip Kodunuzu giriniz </FormDescription>
+                            <FormMessage />
+                          </FormItem>
+                        )
+                      }}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="country"
+                      render={({ field }) => {
+                        return (
+                          <FormItem>
+                            <FormLabel>Ülke *</FormLabel>
+                            <FormControl>
+                              <Select value={field.value} onValueChange={field.onChange}>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Ülke seçiniz" />
+                                </SelectTrigger>
+                                <SelectContent className="max-h-60 overflow-y-auto">
+                                  {countries.map((country) => (
+                                    <SelectItem key={country} value={country}>
+                                      {country}
+                                    </SelectItem>
+                                  ))}
+
+                                </SelectContent>
+
+                              </Select>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )
+                      }}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="city"
+                      render={({ field }) => {
+                        return (
+                          <FormItem>
+                            <FormLabel>Şehir *</FormLabel>
+                            <FormControl>
+                              <Select value={field.value} onValueChange={field.onChange}>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Şehir seçiniz" />
+                                </SelectTrigger>
+                                <SelectContent className="max-h-60 overflow-y-auto">
+                                  {cities.map((city) => (
+                                    <SelectItem key={city} value={city}>
+                                      {city}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            </FormControl>
+                          </FormItem>
+                        )
+                      }}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="adres"
+                      render={({ field }) => {
+                        return (
+                          <FormItem>
+                            <FormLabel>Adres *</FormLabel>
+                            <FormControl>
+                              <Textarea
+                                placeholder="Adresinizi giriniz"
+                                {...field} // value ve onChange burada bağlanıyor
+                                rows={4}  // yüksekliğini ayarlamak için
+                              />
+                            </FormControl>
+                            <FormDescription>Adresiniz en az 10 karakter olmalıdır</FormDescription>
+                            <FormMessage />
+                          </FormItem>
                         );
                       }}
                     />
                   </div>
 
                   <Button type="submit">Formu Gönder</Button>
+                  <Button type="reset" onClick={handleReset} className="ml-2 bg-red-700">Reset</Button>
                 </CardContent>
               </Card>
             </form>
