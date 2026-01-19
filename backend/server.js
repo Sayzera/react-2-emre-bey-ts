@@ -3,8 +3,12 @@ import cors from 'cors'
 import dotenv from 'dotenv'
 
 
-import posts from './posts.json' with { type: "json" }
-
+import posts from './jsonlar/posts.json' with { type: "json" }
+import comments from './jsonlar/comments.json' with {type: "json"}
+import albums from './jsonlar/albums.json' with {type: "json"}
+import photos from './jsonlar/photos.json' with {type: "json"}
+import todos from "./jsonlar/todos.json" with {type: "json"}
+import users from "./jsonlar/users.json" with {type: "json"}
 dotenv.config()
 
 const app = express();
@@ -18,12 +22,12 @@ app.use(express.urlencoded({ extended: true })) // URL-encoded form verilerini p
  * TODO: https://jsonplaceholder.typicode.com/ buradaki 
  * 
  * 
-        /posts	100 posts
-        /comments	500 comments
-        /albums	100 albums
-        /photos	5000 photos
-        /todos	200 todos
-        /users	10 users
+        /posts	100 posts           +
+        /comments	500 comments    +
+        /albums	100 albums          +
+        /photos	5000 photos         +
+        /todos	200 todos           +
+        /users	10 users            
 
         serivsleri oluşturalım tek tek once servise gideceğiz sonra jsonu kopyalayacağız 
  */
@@ -56,12 +60,52 @@ app.get('/info', (req, res) => {
 
 })
 
-app.get('/posts', (req,res) => {
+app.get('/posts', (req, res) => {
 
     res.json({
         message: 'Kullanıcılar başarıyla getirildi',
         success: 200,
         data: posts
+    })
+})
+
+app.get('/comments', (req, res) => {
+    res.json({
+        message: 'Yorumlar başarı ile getirildi.',
+        success: 200,
+        data: comments
+    })
+})
+
+app.get('/albums', (req, res) => {
+    res.json({
+        message: "Albümler başarı ile getirildi.",
+        success: 200,
+        data: albums
+    })
+})
+
+app.get('/photos', (req, res) => {
+    res.json({
+        message: "Fotoğraflar başarı ile getirildi.",
+        success: 200,
+        data: photos
+    })
+})
+
+app.get("/todos", (req, res) => {
+    res.json({
+        message: "todos başarı ile getirildi.",
+        success: 200,
+        data: todos
+    })
+})
+
+app.get("/users", (req, res) => {
+    res.json({
+        message: "Users başarı ile getirildi.",
+        success: 200,
+        data: users
     })
 })
 
