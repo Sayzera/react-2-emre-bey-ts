@@ -2,6 +2,8 @@ import express from 'express';
 import cors from 'cors'
 import dotenv from 'dotenv'
 
+import UserRoutes from './routes/userRoutes.js'
+
 
 import posts from './jsonlar/posts.json' with { type: "json" }
 import comments from './jsonlar/comments.json' with {type: "json"}
@@ -40,6 +42,9 @@ app.use(express.urlencoded({ extended: true })) // URL-encoded form verilerini p
  * patch
  * options 
  */
+
+// TODO: routes içerisinde uygun bir dosya açıp iç kısma çekelim ve prefiks verelim 
+// iş kodlarınıda controler içerisindek ekleyelim 
 
 app.get('/info', (req, res) => {
 
@@ -108,6 +113,9 @@ app.get("/users", (req, res) => {
         data: users
     })
 })
+
+// routes 
+app.use('/api', UserRoutes)
 
 const PORT = process.env.PORT || 5000;
 
