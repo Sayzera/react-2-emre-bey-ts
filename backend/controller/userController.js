@@ -1,5 +1,5 @@
 
-
+import { success, z } from 'zod'
 /**
  * HTTP RESPONSE KODLARI araştırılacak 
  * proje içerisinde en çok kullanılan kodlar araştırılacak ve proje içerisinde hata kodları ile birlikte dönecek 
@@ -48,9 +48,56 @@ const getByUser = async (req, res) => {
     })
 }
 
+const createUser = async (req, res) => {
+
+    const userSchema = z.object({
+        name: z
+            .string()
+            .min(2, "En 2 karekter giriniz."),
+
+        lastname: z
+            .string()
+            .min(2, "En 2 karekter giriniz."),
+        password: z
+            .string()
+            .min(2, "En 2 karekter giriniz."),
+    })
+
+    const body = req.body;
+    const result = userSchema.safeParse(body)
+
+    let errors = result?.error
+
+
+    if (errors) {
+        errors = JSON.parse(errors.message)
+        errors = errors?.map((item) => {
+            return {
+                message: item.message,
+                path: item.path?.[0]
+            }
+        })
+    }
+    res
+        .status(
+            errors ? 400 : 200
+        )
+        .send({
+            message: 'Kullanıcı başarıyla oluşturuldu',
+            success: errors ? false : true,
+            errorCode: errors ? 400 : 200,
+            data: {
+                body,
+            },
+            errors: errors ? errors : {}
+        })
+}
+
+
 
 
 export {
     getAllUsers,
-    getByUser
+    getByUser,
+    createUser
 }

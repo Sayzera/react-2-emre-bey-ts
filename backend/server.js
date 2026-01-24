@@ -107,6 +107,9 @@ app.get("/todos", (req, res) => {
 })
 
 app.get("/users", (req, res) => {
+
+    // DB 
+    
     res.json({
         message: "Users başarı ile getirildi.",
         success: 200,
@@ -130,6 +133,24 @@ app.listen(PORT, () => {
         ╚════════════════════════════════════════╝
             `);
 })
+
+app.get(/(.*)/, (req, res) => {
+    res.status(404).send({
+        message: 'Not Found',
+        success: false,
+        data: {}
+    })
+})
+
+app.post(/(.*)/, (req, res) => {
+    res.status(404).send({
+        message: 'Not Found',
+        success: false,
+        data: {}
+    })
+})
+
+
 
 
 process.on('unhandledRejection', (err) => {

@@ -1,7 +1,7 @@
 
 // es5  require('express')
 import express from 'express';
-import { getAllUsers, getByUser } from '../controller/userController.js';
+import { createUser, getAllUsers, getByUser } from '../controller/userController.js';
 const router = express.Router();
 
 
@@ -26,28 +26,7 @@ router.get('/users', getAllUsers)
 router.get('/users/:id', getByUser);
 
 
-router.post('/users', (req, res) => {
-
-    const data = req.body;
-
-    const userName = data?.name
-    const lastname = data?.lastname;
-    const password = data?.password;
-
-    // if conditions
-
-    // ...
-
-    res.json({
-        message: 'Sezer kullanıcısı başarıyla eklendi',
-        success: true,
-        data: {
-            userName,
-            lastname,
-            password
-        }
-    })
-})
+router.post('/users',  createUser)
 
 
 // 
