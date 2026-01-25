@@ -1,103 +1,174 @@
+import { pool } from "../config/database.js";
 
-import { success, z } from 'zod'
-/**
- * HTTP RESPONSE KODLARI araştırılacak 
- * proje içerisinde en çok kullanılan kodlar araştırılacak ve proje içerisinde hata kodları ile birlikte dönecek 
- * 
- * 
- *  * 200 - OK: Başarılı istek
-    * 201 - Created: Yeni kayıt oluşturuldu
-    * 400 - Bad Request: Eksik/hatalı parametre, geçersiz istek
-    * 401 - Unauthorized: Yetkilendirme gerekli (token eksik/geçersiz)
-    * 403 - Forbidden: Erişim yasak (yetki yok)
-    * 404 - Not Found: Kayıt bulunamadı
-    * 422 - Unprocessable Entity: İş mantığı hatası (validasyon hatası)
-    * 500 - Internal Server Error: Sunucu hatası
-    * 
-    * 
-    * 
-    * 
-    * 
-    * 
-    * 
-    * TODO: Kullanıcı oluşturma formumuzun olduğu bir senaryo düşünelim form içerisinde 8 adet birbirinden farklı alanlar bulunmaktadır
-    * bu alanlar içiersinde sizin belirlemiş olduğunuz validationlar bulunuyor 
-    * bu validasyonu sadece backend taraflı kontrol edelim kullanıcının yaptığı hatayı backendden göndererek uygun bir kısımda gösterelim
-    * Örn: Kullanıcı ad boş geçilemez
-    * 
-    * Eğer sizin isterleriniz doğru ve durumu karşılıyorsa kullanıcıya işlem başarı şeklinde durum kodu ve mesajı gönderiniz. 
- */
-
-const getAllUsers = async (req, res) => {
-    res.send({
-        message: 'Tüm kullanıcılar başarıyla getirildi',
-        success: true,
-        data: {}
-    })
-}
-
-const getByUser = async (req, res) => {
-    console.log(req.query, "req")
-    console.log(req.params, "params")
-
-    const id = req.params?.id;
-
-
-    res.status(401).send({
-        deneme: 'xx'
-    })
-}
-
+// [C]RUD
 const createUser = async (req, res) => {
+    try {
+        const { name, email, age } = req.body;
 
-    const userSchema = z.object({
-        name: z
-            .string()
-            .min(2, "En 2 karekter giriniz."),
+        // TODO: zod validation
+        // res
+        // .status(400)
+        // .json({
+        //     sucess:false,
+        //     message: 'Lütfen tüm gerekli alanları doldurunuz',
+        //     validationErros: [
+        //         {
+        //             message: 'Lütfen isim alanını doldurunuz',
+        //             path: '[\'name\']'
+        //         }
+        //     ]
+        // })
 
-        lastname: z
-            .string()
-            .min(2, "En 2 karekter giriniz."),
-        password: z
-            .string()
-            .min(2, "En 2 karekter giriniz."),
-    })
+        // TODO: aynı email varsa kaydetme ve kullanıcıya bu email daha önce sistemizde mevcuttur şeklinde response don 
 
-    const body = req.body;
-    const result = userSchema.safeParse(body)
+        const result = await pool.query(`
+                INSERT INTO users (name,email,age) VALUES ($1, $2, $3) RETURNING * 
+            `, [name, email, age])
 
-    let errors = result?.error
+        res
+            .status(201)
+            .json({
+                success: true,
+                message: 'Kullanıcı başarıyla oluşturuldu',
+                data: result.rows
+            })
 
 
-    if (errors) {
-        errors = JSON.parse(errors.message)
-        errors = errors?.map((item) => {
-            return {
-                message: item.message,
-                path: item.path?.[0]
-            }
-        })
+
+
+    } catch (error) {
+        res
+            .status(500)
+            .json({
+                success: true,
+                message: 'Bilinmeyen bir hata oluştu lütfen daha sonra tekrar deneyiniz',
+                error: error
+            })
     }
-    res
-        .status(
-            errors ? 400 : 200
-        )
-        .send({
-            message: 'Kullanıcı başarıyla oluşturuldu',
-            success: errors ? false : true,
-            errorCode: errors ? 400 : 200,
-            data: {
-                body,
-            },
-            errors: errors ? errors : {}
-        })
 }
 
+// C[R]UD
+const getAllUsers = async (req, res) => {
+    try {
+
+        // GET ALL USERS
+        const result = await pool.query(
+            'SELECT * FROM users ORDER BY id ASC'
+        )
+
+        res
+            .status(200)
+            .json({
+                success: true,
+                count: result.rows.length,
+                data: result.rows
+            })
+
+    } catch (error) {
+        res
+            .status(500)
+            .json({
+                success: true,
+                message: 'Bilinmeyen bir hata oluştu lütfen daha sonra tekrar deneyiniz',
+                error: error
+            })
+    }
+}
+
+// CR[U]D
+const updateUserById = async (req, res) => {
+    try {
+
+        // TODO: id gerçekten var mı 
+
+        const { id } = req.params;
+
+        const { email, age } = req.body
+
+
+
+        const checkUser = await pool.query(`
+            SELECT * FROM users where id = $1
+            `, [id])
+
+        if (checkUser.rows.length === 0) {
+            res
+                .status(404)
+                .json({
+                    success: false,
+                    message: 'Böyle bir kullanıcı bulunamadı.',
+                })
+        }
+
+        const result = await pool.query(`
+            UPDATE
+                users
+            SET
+                email = $1, age = $2
+            WHERE 
+                id = $3 
+            RETURNING  *
+            `, [email, age, id])
+
+        res
+            .status(200)
+            .json({
+                success: true,
+                count: result.rows.length,
+                data: result.rows
+            })
+
+    } catch (error) {
+        res
+            .status(500)
+            .json({
+                success: true,
+                message: 'Bilinmeyen bir hata oluştu lütfen daha sonra tekrar deneyiniz',
+                error: error
+            })
+    }
+}
+
+// CRU[D]
+const deleteUserById = async (req, res) => {
+    try {
+        //TODO: id varmı diye bakıyorum 
+        const { id } = req.params;
+
+        //TODO: id ye karşılık gelen kullanıcı var mı 
+
+        const result = await pool.query(`
+            DELETE 
+                FROM users
+            WHERE
+                id = $1
+            RETURNING id
+            `, [id])
+          
+
+        res
+            .status(200)
+            .json({
+                success: true,
+                message: 'Kullanıcı başarıyla silindi',
+                data: result.rows
+            })
+    } catch (error) {
+        res
+            .status(500)
+            .json({
+                success: true,
+                message: 'Bilinmeyen bir hata oluştu lütfen daha sonra tekrar deneyiniz',
+                error: error
+            })
+    }
+}
 
 
 
 export {
+    createUser,
     getAllUsers,
-    getByUser,
-    createUser
+    updateUserById,
+    deleteUserById
 }

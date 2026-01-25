@@ -3,7 +3,7 @@ import cors from 'cors'
 import dotenv from 'dotenv'
 
 import UserRoutes from './routes/userRoutes.js'
-
+import ProductRoutes from './routes/productRoutes.js'
 
 import posts from './jsonlar/posts.json' with { type: "json" }
 import comments from './jsonlar/comments.json' with {type: "json"}
@@ -46,79 +46,80 @@ app.use(express.urlencoded({ extended: true })) // URL-encoded form verilerini p
 // TODO: routes içerisinde uygun bir dosya açıp iç kısma çekelim ve prefiks verelim 
 // iş kodlarınıda controler içerisindek ekleyelim 
 
-app.get('/info', (req, res) => {
+// app.get('/info', (req, res) => {
 
-    res.json({
-        message: 'Node js bu v22.20.0 da çalışmaktadır.',
-        success: 200,
-        data: [
-            {
-                name: 'Sezer',
-                job: "Sr.Full Stack Developer"
-            },
-            {
-                name: 'Emre',
-                job: "Sr.Full Stack Developer"
-            }
-        ]
-    })
+//     res.json({
+//         message: 'Node js bu v22.20.0 da çalışmaktadır.',
+//         success: 200,
+//         data: [
+//             {
+//                 name: 'Sezer',
+//                 job: "Sr.Full Stack Developer"
+//             },
+//             {
+//                 name: 'Emre',
+//                 job: "Sr.Full Stack Developer"
+//             }
+//         ]
+//     })
 
-})
+// })
 
-app.get('/posts', (req, res) => {
+// app.get('/posts', (req, res) => {
 
-    res.json({
-        message: 'Kullanıcılar başarıyla getirildi',
-        success: 200,
-        data: posts
-    })
-})
+//     res.json({
+//         message: 'Kullanıcılar başarıyla getirildi',
+//         success: 200,
+//         data: posts
+//     })
+// })
 
-app.get('/comments', (req, res) => {
-    res.json({
-        message: 'Yorumlar başarı ile getirildi.',
-        success: 200,
-        data: comments
-    })
-})
+// app.get('/comments', (req, res) => {
+//     res.json({
+//         message: 'Yorumlar başarı ile getirildi.',
+//         success: 200,
+//         data: comments
+//     })
+// })
 
-app.get('/albums', (req, res) => {
-    res.json({
-        message: "Albümler başarı ile getirildi.",
-        success: 200,
-        data: albums
-    })
-})
+// app.get('/albums', (req, res) => {
+//     res.json({
+//         message: "Albümler başarı ile getirildi.",
+//         success: 200,
+//         data: albums
+//     })
+// })
 
-app.get('/photos', (req, res) => {
-    res.json({
-        message: "Fotoğraflar başarı ile getirildi.",
-        success: 200,
-        data: photos
-    })
-})
+// app.get('/photos', (req, res) => {
+//     res.json({
+//         message: "Fotoğraflar başarı ile getirildi.",
+//         success: 200,
+//         data: photos
+//     })
+// })
 
-app.get("/todos", (req, res) => {
-    res.json({
-        message: "todos başarı ile getirildi.",
-        success: 200,
-        data: todos
-    })
-})
+// app.get("/todos", (req, res) => {
+//     res.json({
+//         message: "todos başarı ile getirildi.",
+//         success: 200,
+//         data: todos
+//     })
+// })
 
-app.get("/users", (req, res) => {
+// app.get("/users", (req, res) => {
 
-    // DB 
+//     // DB 
     
-    res.json({
-        message: "Users başarı ile getirildi.",
-        success: 200,
-        data: users
-    })
-})
+//     res.json({
+//         message: "Users başarı ile getirildi.",
+//         success: 200,
+//         data: users
+//     })
+// })
 
 // routes 
 app.use('/api', UserRoutes)
+app.use('/api', ProductRoutes)
 
 const PORT = process.env.PORT || 5000;
 
@@ -149,7 +150,6 @@ app.post(/(.*)/, (req, res) => {
         data: {}
     })
 })
-
 
 
 
